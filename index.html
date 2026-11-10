@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doğnak - Lojistik Yönetim Sistemi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+          colors: {
+            electric: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb', // Canlı Elektrik Mavisi
+              700: '#1d4ed8',
+              900: '#0f172a',
+            },
+            biga: {
+              light: '#f0f9ff',
+              border: '#bae6fd',
+              solid: '#0284c7', // Biga Canlı Azure
+            },
+            inegol: {
+              light: '#eef2ff',
+              border: '#c7d2fe',
+              solid: '#4f46e5', // İnegöl Kraliyet İndigo
+            }
+          },
+          boxShadow: {
+            'glow-blue': '0 0 20px -3px rgba(37, 99, 235, 0.25)',
+            'card': '0 10px 25px -5px rgba(15, 23, 42, 0.04), 0 8px 10px -6px rgba(15, 23, 42, 0.02)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #f1f5f9; }
+    .nav-btn-active { background-color: #2563eb; color: #ffffff !important; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35); }
+  </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+
+  <!-- ÜST CANLI MAVİ HEADER -->
+  <header class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 border-b border-blue-900/40 sticky top-0 z-40 px-6 py-3.5 shadow-md">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      
+      <!-- Logo: Sadece D harfi büyük 'Doğnak' -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-cyan-400 rounded-xl flex items-center justify-center font-extrabold text-xl text-white shadow-glow-blue tracking-tight">
+          D
+        </div>
+        <div>
+          <span class="text-2xl font-extrabold tracking-tight text-white">Doğnak</span>
+          <span class="text-[11px] block text-cyan-300 font-semibold tracking-widest uppercase">Taşımacılık & Depolama</span>
+        </div>
+      </div>
+
+      <!-- Sayfa Menüleri -->
+      <nav class="flex items-center space-x-1.5 bg-slate-900/60 p-1.5 rounded-xl border border-slate-700/60">
+        <button onclick="changePage('summary')" id="btn-summary" class="nav-btn-active px-4 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-2">
+          <span>Yönetici Özeti</span>
+        </button>
+        <button onclick="changePage('biga')" id="btn-biga" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition flex items-center space-x-2">
+          <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+          <span>Biga Depo</span>
+        </button>
+        <button onclick="changePage('inegol')" id="btn-inegol" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition flex items-center space-x-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+          <span>İnegöl Depo</span>
+        </button>
+        <button onclick="changePage('drivers')" id="btn-drivers" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition flex items-center space-x-2">
+          <span>Toplu Şoför Listesi</span>
+        </button>
+      </nav>
+
+      <!-- Canlı Durum & Profil -->
+      <div class="flex items-center space-x-3 text-right">
+        <div class="hidden sm:block">
+          <div class="text-xs font-bold text-white">Merkez Muhasebe & Sevk</div>
+          <div class="text-[11px] text-cyan-300 flex items-center justify-end gap-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Sistem Canlı
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ANA GÖVDE -->
+  <main class="max-w-7xl mx-auto w-full px-6 py-6 flex-1">
+
+    <!-- =================================================== -->
+    <!-- 1. SAYFA: YÖNETİCİ ÖZETİ (İKİ DEPONUN BİRLEŞİK KONSOLİDE RAPORU) -->
+    <!-- =================================================== -->
+    <section id="page-summary" class="space-y-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Konsolide Yönetici Özeti</h1>
+          <p class="text-xs text-slate-500 mt-0.5">Biga ve İnegöl depolarından günlük beslenen anlık kümüle raporlar.</p>
+        </div>
+        <div class="bg-white border border-slate-200 px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 shadow-sm">
+          Bugün: <span class="text-blue-600">10 Kasım 2026</span>
+        </div>
+      </div>
+
+      <!-- KPI Kartları -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- Toplam Araç -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-card">
+          <div class="flex justify-between items-center text-slate-400">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Bugün Toplam Çıkış</span>
+            <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold">🚛</div>
+          </div>
+          <div class="mt-3 flex items-baseline justify-between">
+            <span class="text-3xl font-extrabold text-slate-900 tracking-tight">42 Araç</span>
+            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">%100 Aktif</span>
+          </div>
+        </div>
+
+        <!-- Biga Hacmi -->
+        <div class="bg-gradient-to-br from-white to-sky-50/50 rounded-2xl p-5 border-2 border-sky-100 shadow-card">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold uppercase tracking-wider text-biga-solid">Biga Depo Hacmi</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-biga-solid"></span>
+          </div>
+          <div class="mt-3 flex items-baseline justify-between">
+            <span class="text-3xl font-extrabold text-slate-900 tracking-tight">24 Araç</span>
+            <span class="text-xs font-semibold text-slate-500">Biga Sevk Sayfası</span>
+          </div>
+        </div>
+
+        <!-- İnegöl Hacmi -->
+        <div class="bg-gradient-to-br from-white to-indigo-50/50 rounded-2xl p-5 border-2 border-indigo-100 shadow-card">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold uppercase tracking-wider text-inegol-solid">İnegöl Depo Hacmi</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-inegol-solid"></span>
+          </div>
+          <div class="mt-3 flex items-baseline justify-between">
+            <span class="text-3xl font-extrabold text-slate-900 tracking-tight">18 Araç</span>
+            <span class="text-xs font-semibold text-slate-500">İnegöl Sevk Sayfası</span>
+          </div>
+        </div>
+
+        <!-- Ödeme Durumu -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-card">
+          <div class="flex justify-between items-center text-slate-400">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-600">Ödeme Bekleyen</span>
+            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold">💳</div>
+          </div>
+          <div class="mt-3 flex items-baseline justify-between">
+            <span class="text-3xl font-extrabold text-amber-600 tracking-tight">9 Araç</span>
+            <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">Dekontsuz</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Çift Depo Karşılaştırmalı Canlı Operasyon Tablosu -->
+      <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-card">
+        <h3 class="text-base font-extrabold text-slate-900 mb-4">Son Yüklenen Çıkışların Hızlı Özeti</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Biga Son Çıkışlar -->
+          <div class="border border-sky-200 rounded-xl p-4 bg-sky-50/30">
+            <div class="flex justify-between items-center pb-3 border-b border-sky-100">
+              <span class="text-sm font-bold text-biga-solid flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-biga-solid"></span> Biga Depo Son 3 Çıkış
+              </span>
+              <button onclick="changePage('biga')" class="text-xs font-bold text-blue-600 hover:underline">Biga Sayfasına Git &rarr;</button>
+            </div>
+            <div class="divide-y divide-sky-100/80 text-xs mt-2">
+              <div class="py-2 flex justify-between items-center">
+                <span class="font-bold text-slate-800 font-mono">17 ZC 882</span>
+                <span>Ahmet Yılmaz</span>
+                <span class="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Ödendi</span>
+              </div>
+              <div class="py-2 flex justify-between items-center">
+                <span class="font-bold text-slate-800 font-mono">17 AA 512</span>
+                <span>Mehmet Demir</span>
+                <span class="text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Bekliyor</span>
+              </div>
+              <div class="py-2 flex justify-between items-center">
+                <span class="font-bold text-slate-800 font-mono">17 BGA 09</span>
+                <span>Kemal Yıldız</span>
+                <span class="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Ödendi</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- İnegöl Son Çıkışlar -->
+          <div class="border border-indigo-200 rounded-xl p-4 bg-indigo-50/30">
+            <div class="flex justify-between items-center pb-3 border-b border-indigo-100">
+              <span class="text-sm font-bold text-inegol-solid flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-inegol-solid"></span> İnegöl Depo Son 3 Çıkış
+              </span>
+              <button onclick="changePage('inegol')" class="text-xs font-bold text-indigo-600 hover:underline">İnegöl Sayfasına Git &rarr;</button>
+            </div>
+            <div class="divide-y divide-indigo-100/80 text-xs mt-2">
+              <div class="py-2 flex justify-between items-center">
+                <span class="font-bold text-slate-800 font-mono">16 KPR 44</span>
+                <span>Mustafa Kaya</span>
+                <span class="text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Bekliyor</span>
+              </div>
+              <div class="py-2 flex justify-between items-center">
+                <span class="font-bold text-slate-800 font-mono">16 IN 108</span>
+                <span>Hakan Koç</span>
+                <span class="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Ödendi</span>
+              </div>
+              <div class="py-2 flex justify-between items-center">
+                <span class="font-bold text-slate-800 font-mono">16 AB 334</span>
+                <span>Ali Güven</span>
+                <span class="text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Bekliyor</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================== -->
+    <!-- 2. SAYFA: BİGA DEPO SEVKİYATLARI (ÖZEL EXCEL YÜKLEME) -->
+    <!-- =================================================== -->
+    <section id="page-biga" class="hidden space-y-5">
+      
+      <!-- Biga Üst Banner & Yükleme -->
+      <div class="bg-gradient-to-r from-sky-600 to-blue-700 rounded-2xl p-6 text-white shadow-glow-blue flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span class="bg-white/20 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">Depo Kodu: 17-BGA</span>
+          <h2 class="text-2xl font-extrabold mt-2">Biga Depo Sevkiyat & Sefer Yönetimi</h2>
+          <p class="text-xs text-sky-100">Biga günlük sevkiyat Excel dosyasını bu sayfaya yükleyin; veriler geriye dönük kümüle saklanır.</p>
+        </div>
+
+        <!-- Biga Özel Excel Yükleme Butonu -->
+        <label class="cursor-pointer bg-white text-blue-700 hover:bg-sky-50 px-4 py-3 rounded-xl font-bold text-sm shadow-md transition flex items-center space-x-2">
+          <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+          <span>Biga Günlük Excel Yükle</span>
+          <input type="file" class="hidden" onchange="alert('Biga Excel dosyası içeri aktarıldı ve kümüle listeye eklendi!')">
+        </label>
+      </div>
+
+      <!-- Biga Filtre Barı -->
+      <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold text-slate-500 uppercase">Filtrele:</span>
+          <input type="date" value="2026-11-10" class="border border-slate-200 rounded-lg px-3 py-1.5 text-xs bg-slate-50 font-medium">
+          <input type="text" placeholder="Biga Plaka Ara..." class="border border-slate-200 rounded-lg px-3 py-1.5 text-xs bg-slate-50 font-medium w-36">
+          <input type="text" placeholder="Şoför Ara..." class="border border-slate-200 rounded-lg px-3 py-1.5 text-xs bg-slate-50 font-medium w-36">
+        </div>
+        <div class="text-xs font-semibold text-slate-500">
+          Toplam Sefer: <strong class="text-slate-900">24</strong> | Ödenen: <strong class="text-emerald-600">18</strong>
+        </div>
+      </div>
+
+      <!-- Biga Sefer Tablosu -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-card overflow-hidden">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-sky-50/70 border-b border-sky-100 text-xs font-bold text-sky-900 uppercase tracking-wider">
+            <tr>
+              <th class="py-3 px-4">Sefer Tarihi</th>
+              <th class="py-3 px-4">Plaka</th>
+              <th class="py-3 px-4">Şoför Bilgisi</th>
+              <th class="py-3 px-4">Sefer Ücreti</th>
+              <th class="py-3 px-4">Muhasebe & Dekont</th>
+              <th class="py-3 px-4 text-right">Plaka/Şoför Değiştir</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 font-medium">
+            <tr class="hover:bg-slate-50 transition">
+              <td class="py-3.5 px-4 text-slate-600 font-mono">10.11.2026</td>
+              <td class="py-3.5 px-4 font-bold text-slate-900 font-mono tracking-wide">17 ZC 882</td>
+              <td class="py-3.5 px-4">
+                <span class="font-bold text-slate-800">Ahmet Yılmaz</span>
+                <span class="block text-xs text-slate-400">0532 111 22 33</span>
+              </td>
+              <td class="py-3.5 px-4 font-bold text-slate-800 font-mono">8.500 ₺</td>
+              <td class="py-3.5 px-4">
+                <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded text-xs font-bold">Ödendi</span>
+                <button onclick="openReceiptModal('Ahmet Yılmaz - 17 ZC 882', '8.500 ₺', 'dekont_17zc882.pdf')" class="ml-2 text-xs font-bold text-blue-600 hover:underline">Dekont</button>
+              </td>
+              <td class="py-3.5 px-4 text-right">
+                <button onclick="openEditModal('17 ZC 882', 'Ahmet Yılmaz')" class="text-xs font-semibold bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-md text-slate-700">Düzenle</button>
+              </td>
+            </tr>
+
+            <tr class="hover:bg-slate-50 transition">
+              <td class="py-3.5 px-4 text-slate-600 font-mono">10.11.2026</td>
+              <td class="py-3.5 px-4 font-bold text-slate-900 font-mono tracking-wide">17 AA 512</td>
+              <td class="py-3.5 px-4">
+                <span class="font-bold text-slate-800">Mehmet Demir</span>
+                <span class="block text-xs text-slate-400">0505 333 44 55</span>
+              </td>
+              <td class="py-3.5 px-4 font-bold text-slate-800 font-mono">7.200 ₺</td>
+              <td class="py-3.5 px-4">
+                <span class="bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded text-xs font-bold">Bekliyor</span>
+                <button onclick="openPaymentUploadModal('17 AA 512', 'Mehmet Demir')" class="ml-2 text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">+ Ödeme İşle</button>
+              </td>
+              <td class="py-3.5 px-4 text-right">
+                <button onclick="openEditModal('17 AA 512', 'Mehmet Demir')" class="text-xs font-semibold bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-md text-slate-700">Düzenle</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- =================================================== -->
+    <!-- 3. SAYFA: İNEGÖL DEPO SEVKİYATLARI (ÖZEL EXCEL YÜKLEME) -->
+    <!-- =================================================== -->
+    <section id="page-inegol" class="hidden space-y-5">
+      
+      <!-- İnegöl Üst Banner & Yükleme -->
+      <div class="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-6 text-white shadow-card flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span class="bg-white/20 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">Depo Kodu: 16-ING</span>
+          <h2 class="text-2xl font-extrabold mt-2">İnegöl Depo Sevkiyat & Sefer Yönetimi</h2>
+          <p class="text-xs text-indigo-100">İnegöl günlük sevkiyat Excel dosyasını bu sayfaya yükleyin; veriler geriye dönük kümüle saklanır.</p>
+        </div>
+
+        <!-- İnegöl Özel Excel Yükleme Butonu -->
+        <label class="cursor-pointer bg-white text-indigo-700 hover:bg-indigo-50 px-4 py-3 rounded-xl font-bold text-sm shadow-md transition flex items-center space-x-2">
+          <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+          <span>İnegöl Günlük Excel Yükle</span>
+          <input type="file" class="hidden" onchange="alert('İnegöl Excel dosyası içeri aktarıldı ve kümüle listeye eklendi!')">
+        </label>
+      </div>
+
+      <!-- İnegöl Filtre Barı -->
+      <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold text-slate-500 uppercase">Filtrele:</span>
+          <input type="date" value="2026-11-10" class="border border-slate-200 rounded-lg px-3 py-1.5 text-xs bg-slate-50 font-medium">
+          <input type="text" placeholder="İnegöl Plaka Ara..." class="border border-slate-200 rounded-lg px-3 py-1.5 text-xs bg-slate-50 font-medium w-36">
+          <input type="text" placeholder="Şoför Ara..." class="border border-slate-200 rounded-lg px-3 py-1.5 text-xs bg-slate-50 font-medium w-36">
+        </div>
+        <div class="text-xs font-semibold text-slate-500">
+          Toplam Sefer: <strong class="text-slate-900">18</strong> | Ödenen: <strong class="text-emerald-600">14</strong>
+        </div>
+      </div>
+
+      <!-- İnegöl Sefer Tablosu -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-card overflow-hidden">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-indigo-50/70 border-b border-indigo-100 text-xs font-bold text-indigo-900 uppercase tracking-wider">
+            <tr>
+              <th class="py-3 px-4">Sefer Tarihi</th>
+              <th class="py-3 px-4">Plaka</th>
+              <th class="py-3 px-4">Şoför Bilgisi</th>
+              <th class="py-3 px-4">Sefer Ücreti</th>
+              <th class="py-3 px-4">Muhasebe & Dekont</th>
+              <th class="py-3 px-4 text-right">Plaka/Şoför Değiştir</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 font-medium">
+            <tr class="hover:bg-slate-50 transition">
+              <td class="py-3.5 px-4 text-slate-600 font-mono">10.11.2026</td>
+              <td class="py-3.5 px-4 font-bold text-slate-900 font-mono tracking-wide">16 KPR 44</td>
+              <td class="py-3.5 px-4">
+                <span class="font-bold text-slate-800">Mustafa Kaya</span>
+                <span class="block text-xs text-slate-400">0544 999 88 77</span>
+              </td>
+              <td class="py-3.5 px-4 font-bold text-slate-800 font-mono">12.000 ₺</td>
+              <td class="py-3.5 px-4">
+                <span class="bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded text-xs font-bold">Bekliyor</span>
+                <button onclick="openPaymentUploadModal('16 KPR 44', 'Mustafa Kaya')" class="ml-2 text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">+ Ödeme İşle</button>
+              </td>
+              <td class="py-3.5 px-4 text-right">
+                <button onclick="openEditModal('16 KPR 44', 'Mustafa Kaya')" class="text-xs font-semibold bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-md text-slate-700">Düzenle</button>
+              </td>
+            </tr>
+
+            <tr class="hover:bg-slate-50 transition">
+              <td class="py-3.5 px-4 text-slate-600 font-mono">10.11.2026</td>
+              <td class="py-3.5 px-4 font-bold text-slate-900 font-mono tracking-wide">16 IN 108</td>
+              <td class="py-3.5 px-4">
+                <span class="font-bold text-slate-800">Hakan Koç</span>
+                <span class="block text-xs text-slate-400">0535 666 77 88</span>
+              </td>
+              <td class="py-3.5 px-4 font-bold text-slate-800 font-mono">11.400 ₺</td>
+              <td class="py-3.5 px-4">
+                <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded text-xs font-bold">Ödendi</span>
+                <button onclick="openReceiptModal('Hakan Koç - 16 IN 108', '11.400 ₺', 'dekont_16in108.pdf')" class="ml-2 text-xs font-bold text-blue-600 hover:underline">Dekont</button>
+              </td>
+              <td class="py-3.5 px-4 text-right">
+                <button onclick="openEditModal('16 IN 108', 'Hakan Koç')" class="text-xs font-semibold bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-md text-slate-700">Düzenle</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- =================================================== -->
+    <!-- 4. SAYFA: TOPLU ŞOFÖR LİSTESİ (İKİ DEPODAN BESLENİR) -->
+    <!-- =================================================== -->
+    <section id="page-drivers" class="hidden space-y-5">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+        <div>
+          <h2 class="text-xl font-extrabold text-slate-900">Merkezi Şoför Havuzu</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Biga ve İnegöl yüklemelerinden otomatik toplanan aktif şoförler.</p>
+        </div>
+
+        <!-- Şoför Depo Filtresi -->
+        <div class="flex items-center space-x-2 bg-slate-100 p-1 rounded-xl text-xs font-bold">
+          <button onclick="filterDriverList('all')" id="drv-btn-all" class="px-3 py-1.5 rounded-lg bg-white shadow text-blue-600">Tümü (38)</button>
+          <button onclick="filterDriverList('biga')" id="drv-btn-biga" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900">Biga Şoförleri</button>
+          <button onclick="filterDriverList('inegol')" id="drv-btn-inegol" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900">İnegöl Şoförleri</button>
+        </div>
+      </div>
+
+      <!-- Şoför Kartları Izgarası -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="driver-cards-container">
+        <!-- Şoför 1: Biga -->
+        <div class="driver-card biga-driver bg-white rounded-2xl p-5 border-2 border-sky-100 shadow-card hover:border-sky-300 transition">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-biga-solid bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">Biga Depo Şoförü</span>
+              <h4 class="text-base font-extrabold text-slate-900 mt-2">Ahmet Yılmaz</h4>
+              <p class="text-xs text-slate-400 font-mono mt-0.5">TC: 281*****12</p>
+            </div>
+            <span class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 font-mono border">17 ZC 882</span>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-xs text-slate-600 font-medium">
+            <span>Toplam Sefer: <strong class="text-slate-900">48</strong></span>
+            <span>Tel: <strong>0532 111 22 33</strong></span>
+          </div>
+        </div>
+
+        <!-- Şoför 2: İnegöl -->
+        <div class="driver-card inegol-driver bg-white rounded-2xl p-5 border-2 border-indigo-100 shadow-card hover:border-indigo-300 transition">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-inegol-solid bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200">İnegöl Depo Şoförü</span>
+              <h4 class="text-base font-extrabold text-slate-900 mt-2">Mustafa Kaya</h4>
+              <p class="text-xs text-slate-400 font-mono mt-0.5">TC: 194*****44</p>
+            </div>
+            <span class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 font-mono border">16 KPR 44</span>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-xs text-slate-600 font-medium">
+            <span>Toplam Sefer: <strong class="text-slate-900">62</strong></span>
+            <span>Tel: <strong>0544 999 88 77</strong></span>
+          </div>
+        </div>
+
+        <!-- Şoför 3: Biga -->
+        <div class="driver-card biga-driver bg-white rounded-2xl p-5 border-2 border-sky-100 shadow-card hover:border-sky-300 transition">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-biga-solid bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">Biga Depo Şoförü</span>
+              <h4 class="text-base font-extrabold text-slate-900 mt-2">Mehmet Demir</h4>
+              <p class="text-xs text-slate-400 font-mono mt-0.5">TC: 412*****90</p>
+            </div>
+            <span class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 font-mono border">17 AA 512</span>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-xs text-slate-600 font-medium">
+            <span>Toplam Sefer: <strong class="text-slate-900">31</strong></span>
+            <span>Tel: <strong>0505 333 44 55</strong></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: DEKONT GÖRÜNTÜLEME -->
+  <div id="receipt-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="font-extrabold text-slate-900 text-base">Dekont Önizleme</h3>
+        <button onclick="closeModal('receipt-modal')" class="text-slate-400 hover:text-slate-700 text-xl font-bold">&times;</button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div class="p-3 bg-slate-50 rounded-xl space-y-1">
+          <div class="text-slate-500 font-medium">Şoför / Plaka</div>
+          <div id="modal-driver-title" class="font-extrabold text-slate-900 text-sm"></div>
+          <div class="text-slate-500 font-medium mt-2">Ödenen Tutar</div>
+          <div id="modal-driver-amount" class="font-extrabold text-emerald-600 text-base font-mono"></div>
+        </div>
+        <div class="p-4 border-2 border-dashed border-blue-200 rounded-xl bg-blue-50/50 text-center">
+          <span class="text-2xl block mb-1">📄</span>
+          <span id="modal-filename" class="font-bold text-slate-700 block"></span>
+          <button class="mt-3 w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg transition text-xs">
+            Dosyayı Yeni Sekmede Aç / İndir
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ÖDEME YAP & EVRAK YÜKLE -->
+  <div id="payment-upload-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="font-extrabold text-slate-900 text-base">Muhasebe Ödeme İşle</h3>
+        <button onclick="closeModal('payment-upload-modal')" class="text-slate-400 hover:text-slate-700 text-xl font-bold">&times;</button>
+      </div>
+      <form onsubmit="event.preventDefault(); alert('Ödeme ve dekont başarıyla işlendi!'); closeModal('payment-upload-modal');" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-600 mb-1">Sefer / Şoför</label>
+          <input type="text" id="pay-input-details" readonly class="w-full bg-slate-100 border border-slate-200 rounded-lg p-2 font-bold text-slate-700">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-600 mb-1">Ödeme Tutarı (₺)</label>
+          <input type="text" placeholder="Örn: 8.500" class="w-full border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-600 mb-1">Banka Dekontu / Makbuz Yükle</label>
+          <input type="file" class="w-full border border-dashed border-slate-300 rounded-lg p-2 bg-slate-50 text-[11px]">
+        </div>
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2.5 rounded-xl shadow-md transition">
+          Ödemeyi Onayla & Arşivle
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ŞOFÖR VEYA PLAKA DEĞİŞİKLİĞİ -->
+  <div id="edit-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="font-extrabold text-slate-900 text-base">Plaka / Şoför Değiştir</h3>
+        <button onclick="closeModal('edit-modal')" class="text-slate-400 hover:text-slate-700 text-xl font-bold">&times;</button>
+      </div>
+      <form onsubmit="event.preventDefault(); alert('Sevkiyat araç ve şoför bilgisi güncellendi!'); closeModal('edit-modal');" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-600 mb-1">Araç Plakası</label>
+          <input type="text" id="edit-plate-val" class="w-full border border-slate-300 rounded-lg p-2 font-mono font-bold text-slate-900">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-600 mb-1">Şoför Adı Soyadı</label>
+          <input type="text" id="edit-driver-val" class="w-full border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
+        </div>
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-2.5 rounded-xl shadow-md transition">
+          Değişiklikleri Kaydet
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT: SAYFA VE MODAL KONTROLLERİ -->
+  <script>
+    function changePage(pageId) {
+      // Sayfaları gizle
+      ['summary', 'biga', 'inegol', 'drivers'].forEach(p => {
+        document.getElementById('page-' + p).classList.add('hidden');
+        document.getElementById('btn-' + p).className = 'px-4 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition flex items-center space-x-2';
+      });
+
+      // İlgili sayfayı göster ve butonunu mavi yap
+      document.getElementById('page-' + pageId).classList.remove('hidden');
+      document.getElementById('btn-' + pageId).className = 'nav-btn-active px-4 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-2';
+    }
+
+    function filterDriverList(type) {
+      const cards = document.querySelectorAll('.driver-card');
+      const btnAll = document.getElementById('drv-btn-all');
+      const btnBiga = document.getElementById('drv-btn-biga');
+      const btnInegol = document.getElementById('drv-btn-inegol');
+
+      [btnAll, btnBiga, btnInegol].forEach(b => b.className = 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900');
+
+      if (type === 'all') {
+        btnAll.className = 'px-3 py-1.5 rounded-lg bg-white shadow text-blue-600 font-bold';
+        cards.forEach(c => c.style.display = '');
+      } else if (type === 'biga') {
+        btnBiga.className = 'px-3 py-1.5 rounded-lg bg-white shadow text-biga-solid font-bold';
+        cards.forEach(c => c.classList.contains('biga-driver') ? c.style.display = '' : c.style.display = 'none');
+      } else if (type === 'inegol') {
+        btnInegol.className = 'px-3 py-1.5 rounded-lg bg-white shadow text-inegol-solid font-bold';
+        cards.forEach(c => c.classList.contains('inegol-driver') ? c.style.display = '' : c.style.display = 'none');
+      }
+    }
+
+    function openReceiptModal(title, amount, filename) {
+      document.getElementById('modal-driver-title').innerText = title;
+      document.getElementById('modal-driver-amount').innerText = amount;
+      document.getElementById('modal-filename').innerText = filename;
+      document.getElementById('receipt-modal').classList.remove('hidden');
+      document.getElementById('receipt-modal').classList.add('flex');
+    }
+
+    function openPaymentUploadModal(plate, driver) {
+      document.getElementById('pay-input-details').value = plate + ' - ' + driver;
+      document.getElementById('payment-upload-modal').classList.remove('hidden');
+      document.getElementById('payment-upload-modal').classList.add('flex');
+    }
+
+    function openEditModal(plate, driver) {
+      document.getElementById('edit-plate-val').value = plate;
+      document.getElementById('edit-driver-val').value = driver;
+      document.getElementById('edit-modal').classList.remove('hidden');
+      document.getElementById('edit-modal').classList.add('flex');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+      document.getElementById(id).classList.remove('flex');
+    }
+  </script>
+
+</body>
+</html>
