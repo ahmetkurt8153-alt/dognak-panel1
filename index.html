@@ -6,8 +6,8 @@
   <title>Doğnak - Taşımacılık & Depolama Yönetim Paneli</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Supabase JS Client -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Supabase JS Client (Doğrudan Tarayıcı UMD Paketi) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <!-- Excel Okuyucu (SheetJS) -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -70,7 +70,7 @@
       <div class="text-right">
         <div class="text-xs font-bold text-white">Merkez Muhasebe & Sevk</div>
         <div id="connection-status" class="text-[11px] text-cyan-300 flex items-center justify-end gap-1">
-          <span class="w-2 h-2 rounded-full bg-amber-400"></span> Bağlanıyor...
+          <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> Bağlantı kuruluyor...
         </div>
       </div>
     </div>
@@ -145,7 +145,7 @@
             </tr>
           </thead>
           <tbody id="biga-table-body" class="divide-y divide-slate-100 font-medium">
-            <tr><td colspan="6" class="p-6 text-center text-slate-400 text-xs">Yükleniyor veya henüz veri yok...</td></tr>
+            <tr><td colspan="6" class="p-6 text-center text-slate-400 text-xs">Henüz kayıtlı Biga seferi yok.</td></tr>
           </tbody>
         </table>
       </div>
@@ -185,7 +185,7 @@
             </tr>
           </thead>
           <tbody id="inegol-table-body" class="divide-y divide-slate-100 font-medium">
-            <tr><td colspan="6" class="p-6 text-center text-slate-400 text-xs">Yükleniyor veya henüz veri yok...</td></tr>
+            <tr><td colspan="6" class="p-6 text-center text-slate-400 text-xs">Henüz kayıtlı İnegöl seferi yok.</td></tr>
           </tbody>
         </table>
       </div>
@@ -268,28 +268,32 @@
 
     let db = null;
     let allTrips = [];
+    let attempts = 0;
 
-    // Sayfa Yüklendiğinde Doğrudan Başlat
     function initApp() {
-      try {
-        if (window.supabase && window.supabase.createClient) {
-          db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-          document.getElementById('connection-status').innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Veritabanı Bağlı';
+      attempts++;
+      const statusEl = document.getElementById('connection-status');
+      
+      // Supabase global objesi UMD'den supabase veya window.supabase olarak gelir
+      const clientCreator = (window.supabase && window.supabase.createClient) || (typeof supabase !== 'undefined' && supabase.createClient);
+
+      if (clientCreator) {
+        try {
+          db = clientCreator(SUPABASE_URL, SUPABASE_ANON_KEY);
+          statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Veritabanı Bağlı';
           fetchAndRenderAll();
-        } else {
-          setTimeout(initApp, 300); // Kütüphanenin tam inmesini bekle
+        } catch (err) {
+          statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-400"></span> Hata: ' + err.message;
         }
-      } catch (err) {
-        console.error('Supabase bağlantı hatası:', err);
-        document.getElementById('connection-status').innerHTML = '<span class="w-2 h-2 rounded-full bg-red-400"></span> Hata: ' + err.message;
+      } else if (attempts < 15) {
+        setTimeout(initApp, 200);
+      } else {
+        statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-400"></span> Kütüphane Yüklenemedi (CDN)';
       }
     }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initApp);
-    } else {
-      initApp();
-    }
+    // Hemen başlat
+    initApp();
 
     function changePage(pageId) {
       ['summary', 'biga', 'inegol', 'drivers'].forEach(p => {
@@ -564,4 +568,27 @@
 
     function clearFilter(depotName) {
       const isBiga = depotName === 'Biga Depo';
-      document.getElementById(isBiga ? 'filter-biga-date' : 'filter-inegol-date').v
+      document.getElementById(isBiga ? 'filter-biga-date' : 'filter-inegol-date').value = '';
+      document.getElementById(isBiga ? 'filter-biga-plate' : 'filter-inegol-plate').value = '';
+      document.getElementById(isBiga ? 'filter-biga-driver' : 'filter-inegol-driver').value = '';
+      renderTables(allTrips);
+    }
+
+    function filterDrivers(depot) {
+      const cards = document.querySelectorAll('.driver-card');
+      document.querySelectorAll('#page-drivers button').forEach(b => b.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100');
+      
+      if (depot === 'all') {
+        document.getElementById('btn-drv-all').className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white';
+        cards.forEach(c => c.style.display = '');
+      } else if (depot === 'Biga Depo') {
+        document.getElementById('btn-drv-biga').className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-sky-600 text-white';
+        cards.forEach(c => c.dataset.warehouse === 'Biga Depo' ? c.style.display = '' : c.style.display = 'none');
+      } else {
+        document.getElementById('btn-drv-inegol').className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white';
+        cards.forEach(c => c.dataset.warehouse === 'İnegöl Depo' ? c.style.display = '' : c.style.display = 'none');
+      }
+    }
+  </script>
+</body>
+</html>
