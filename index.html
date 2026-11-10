@@ -6,7 +6,7 @@
   <title>Doğnak - Taşımacılık & Depolama Yönetim Paneli</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Supabase JS Client v2 -->
+  <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Excel Okuyucu (SheetJS) -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -125,7 +125,6 @@
         </label>
       </div>
 
-      <!-- Filtreleme Çubuğu -->
       <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-wrap items-center gap-3">
         <input type="date" id="filter-biga-date" onchange="filterTable('Biga Depo')" class="border rounded-lg px-3 py-1.5 text-xs bg-slate-50">
         <input type="text" id="filter-biga-plate" onkeyup="filterTable('Biga Depo')" placeholder="Plaka Ara..." class="border rounded-lg px-3 py-1.5 text-xs bg-slate-50 w-36">
@@ -133,7 +132,6 @@
         <button onclick="clearFilter('Biga Depo')" class="text-xs text-blue-600 font-bold hover:underline">Filtreyi Temizle</button>
       </div>
 
-      <!-- Biga Tablosu -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-card overflow-x-auto">
         <table class="w-full text-left text-sm">
           <thead class="bg-sky-50 border-b border-sky-100 text-xs font-bold text-sky-900 uppercase">
@@ -167,7 +165,6 @@
         </label>
       </div>
 
-      <!-- Filtreleme Çubuğu -->
       <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-wrap items-center gap-3">
         <input type="date" id="filter-inegol-date" onchange="filterTable('İnegöl Depo')" class="border rounded-lg px-3 py-1.5 text-xs bg-slate-50">
         <input type="text" id="filter-inegol-plate" onkeyup="filterTable('İnegöl Depo')" placeholder="Plaka Ara..." class="border rounded-lg px-3 py-1.5 text-xs bg-slate-50 w-36">
@@ -175,7 +172,6 @@
         <button onclick="clearFilter('İnegöl Depo')" class="text-xs text-indigo-600 font-bold hover:underline">Filtreyi Temizle</button>
       </div>
 
-      <!-- İnegöl Tablosu -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-card overflow-x-auto">
         <table class="w-full text-left text-sm">
           <thead class="bg-indigo-50 border-b border-indigo-100 text-xs font-bold text-indigo-900 uppercase">
@@ -208,9 +204,7 @@
           <button onclick="filterDrivers('İnegöl Depo')" id="btn-drv-inegol" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100">İnegöl</button>
         </div>
       </div>
-      <div id="drivers-container" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Dinamik şoför kartları buraya gelir -->
-      </div>
+      <div id="drivers-container" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
     </section>
 
   </main>
@@ -269,28 +263,34 @@
 
   <!-- SİSTEMİN BEYNİ: VERİTABANI VE EXCEL İŞLEMLERİ -->
   <script>
-    // ==========================================
-    // 1. SUPABASE BİLGİLERİN DOĞRUDAN BAĞLANDI
-    // ==========================================
     const SUPABASE_URL = 'https://bmliyzujfblvztnhvbwi.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_5jM9tC4mZ9AzdijPGcN_KQ_V4a4UbKS';
 
-    let supabase = null;
+    let db = null;
     let allTrips = [];
 
-    // Başlangıç Kurulumu
-    window.addEventListener('DOMContentLoaded', () => {
+    // Sayfa Yüklendiğinde Doğrudan Başlat
+    function initApp() {
       try {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        document.getElementById('connection-status').innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Veritabanı Bağlı';
-        fetchAndRenderAll();
+        if (window.supabase && window.supabase.createClient) {
+          db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+          document.getElementById('connection-status').innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Veritabanı Bağlı';
+          fetchAndRenderAll();
+        } else {
+          setTimeout(initApp, 300); // Kütüphanenin tam inmesini bekle
+        }
       } catch (err) {
         console.error('Supabase bağlantı hatası:', err);
-        document.getElementById('connection-status').innerHTML = '<span class="w-2 h-2 rounded-full bg-red-400"></span> Bağlantı Hatası';
+        document.getElementById('connection-status').innerHTML = '<span class="w-2 h-2 rounded-full bg-red-400"></span> Hata: ' + err.message;
       }
-    });
+    }
 
-    // Sayfa Değiştirici
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+      initApp();
+    }
+
     function changePage(pageId) {
       ['summary', 'biga', 'inegol', 'drivers'].forEach(p => {
         document.getElementById('page-' + p).classList.add('hidden');
@@ -300,11 +300,8 @@
       document.getElementById('btn-' + pageId).className = 'nav-btn-active px-4 py-2 rounded-lg text-xs font-bold transition';
     }
 
-    // ==========================================
-    // 2. EXCEL OKUMA VE VERİTABANINA KÜMÜLE EKLEME
-    // ==========================================
     async function handleExcelUpload(event, depotName) {
-      if (!supabase) return alert('Veritabanına bağlanılamadı!');
+      if (!db) return alert('Veritabanına bağlanılamadı!');
       const file = event.target.files[0];
       if (!file) return;
 
@@ -341,11 +338,11 @@
 
           if (insertedTrips.length === 0) return alert('Excel dosyasında "Plaka" kolonu bulunamadı!');
 
-          const { data: savedData, error } = await supabase.from('trips').insert(insertedTrips).select();
+          const { data: savedData, error } = await db.from('trips').insert(insertedTrips).select();
           if (error) throw error;
 
           const paymentsToInsert = savedData.map(t => ({ trip_id: t.id, is_paid: false }));
-          await supabase.from('payments').insert(paymentsToInsert);
+          await db.from('payments').insert(paymentsToInsert);
 
           alert(`${depotName} için ${savedData.length} sefer başarıyla veritabanına kümüle eklendi!`);
           fetchAndRenderAll();
@@ -357,19 +354,17 @@
       reader.readAsArrayBuffer(file);
     }
 
-    // ==========================================
-    // 3. VERİLERİ ÇEKME VE LİSTELEME
-    // ==========================================
     async function fetchAndRenderAll() {
-      if (!supabase) return;
+      if (!db) return;
       
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from('trips')
         .select(`*, warehouses(name), payments(*)`)
         .order('trip_date', { ascending: false });
 
       if (error) {
         console.error('Veri çekilemedi:', error);
+        document.getElementById('connection-status').innerHTML = '<span class="w-2 h-2 rounded-full bg-red-400"></span> Veri Hatası: ' + error.message;
         return;
       }
 
@@ -461,9 +456,6 @@
       `).join('');
     }
 
-    // ==========================================
-    // 4. ÖDEME VE DEKONT YÜKLEME
-    // ==========================================
     function openPaymentModal(tripId, title, amount) {
       document.getElementById('pay-trip-id').value = tripId;
       document.getElementById('pay-title').value = title;
@@ -486,20 +478,20 @@
         if (file) {
           const fileExt = file.name.split('.').pop();
           const fileName = `${tripId}_${Date.now()}.${fileExt}`;
-          const { error: uploadErr } = await supabase.storage
+          const { error: uploadErr } = await db.storage
             .from('dekontlar')
             .upload(fileName, file);
 
           if (uploadErr) throw uploadErr;
 
-          const { data: publicUrlData } = supabase.storage
+          const { data: publicUrlData } = db.storage
             .from('dekontlar')
             .getPublicUrl(fileName);
 
           receiptUrl = publicUrlData.publicUrl;
         }
 
-        const { error } = await supabase
+        const { error } = await db
           .from('payments')
           .update({
             is_paid: true,
@@ -521,9 +513,6 @@
       }
     }
 
-    // ==========================================
-    // 5. DÜZENLEME (PLAKA / ŞOFÖR DEĞİŞTİR)
-    // ==========================================
     function openEditModal(tripId, plate, driver) {
       document.getElementById('edit-trip-id').value = tripId;
       document.getElementById('edit-plate-val').value = plate;
@@ -538,7 +527,7 @@
       const plate = document.getElementById('edit-plate-val').value.trim().toUpperCase();
       const driver = document.getElementById('edit-driver-val').value.trim();
 
-      const { error } = await supabase
+      const { error } = await db
         .from('trips')
         .update({ plate_number: plate, driver_name: driver, updated_at: new Date().toISOString() })
         .eq('id', tripId);
@@ -575,27 +564,4 @@
 
     function clearFilter(depotName) {
       const isBiga = depotName === 'Biga Depo';
-      document.getElementById(isBiga ? 'filter-biga-date' : 'filter-inegol-date').value = '';
-      document.getElementById(isBiga ? 'filter-biga-plate' : 'filter-inegol-plate').value = '';
-      document.getElementById(isBiga ? 'filter-biga-driver' : 'filter-inegol-driver').value = '';
-      renderTables(allTrips);
-    }
-
-    function filterDrivers(depot) {
-      const cards = document.querySelectorAll('.driver-card');
-      document.querySelectorAll('#page-drivers button').forEach(b => b.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100');
-      
-      if (depot === 'all') {
-        document.getElementById('btn-drv-all').className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white';
-        cards.forEach(c => c.style.display = '');
-      } else if (depot === 'Biga Depo') {
-        document.getElementById('btn-drv-biga').className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-sky-600 text-white';
-        cards.forEach(c => c.dataset.warehouse === 'Biga Depo' ? c.style.display = '' : c.style.display = 'none');
-      } else {
-        document.getElementById('btn-drv-inegol').className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white';
-        cards.forEach(c => c.dataset.warehouse === 'İnegöl Depo' ? c.style.display = '' : c.style.display = 'none');
-      }
-    }
-  </script>
-</body>
-</html>
+      document.getElementById(isBiga ? 'filter-biga-date' : 'filter-inegol-date').v
