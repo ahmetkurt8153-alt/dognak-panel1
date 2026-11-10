@@ -19,12 +19,12 @@
           fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
           colors: {
             app: {
-              bg: '#080d1a',      // En derin lacivert zemin
-              sidebar: '#0b1329', // Sidebar laciverti
-              card: '#0f1a36',    // Kart arkaplanı
-              cardBorder: '#1c2d5a', // İnce bordür
+              bg: '#080d1a',
+              sidebar: '#0b1329',
+              card: '#0f1a36',
+              cardBorder: '#1c2d5a',
               cardHover: '#132145',
-              accent: '#3b82f6',  // Elektrik mavisi
+              accent: '#3b82f6',
             }
           }
         }
@@ -34,93 +34,92 @@
   <style>
     body { background-color: #080d1a; color: #f1f5f9; }
     .nav-item-active { background-color: #1e3a8a !important; color: #ffffff !important; border: 1px solid #3b82f6; }
-    /* İnce kaydırma çubuğu */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #080d1a; }
     ::-webkit-scrollbar-thumb { background: #1c2d5a; border-radius: 4px; }
+    /* Menü daraltma stilleri */
+    .sidebar-collapsed { width: 5rem !important; }
+    .sidebar-collapsed .sidebar-text { display: none !important; }
+    .sidebar-collapsed .sidebar-header { justify-content: center !important; }
+    .sidebar-collapsed .sidebar-nav-btn { justify-content: center !important; padding-left: 0 !important; padding-right: 0 !important; }
   </style>
 </head>
 <body class="antialiased min-h-screen flex text-slate-100 font-sans selection:bg-blue-600 selection:text-white">
 
   <!-- ========================================== -->
-  <!-- 1. SOL DİKEY SIDEBAR (GÖRSELİN BİREBİR AYNISI) -->
+  <!-- 1. SOL DİKEY SIDEBAR (AÇILIR / KAPANIR) -->
   <!-- ========================================== -->
-  <aside class="w-64 bg-app-sidebar border-r border-app-cardBorder flex flex-col justify-between shrink-0 min-h-screen sticky top-0 p-4">
+  <aside id="main-sidebar" class="w-64 bg-app-sidebar border-r border-app-cardBorder flex flex-col justify-between shrink-0 min-h-screen sticky top-0 p-4 transition-all duration-300 z-30">
     <div class="space-y-6">
-      <!-- Logo -->
-      <div class="flex items-center space-x-3 px-2 py-1">
-        <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-cyan-400 rounded-xl flex items-center justify-center font-extrabold text-xl text-white shadow-lg shadow-blue-500/20">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path></svg>
+      
+      <!-- Logo & Daraltma Butonu -->
+      <div class="sidebar-header flex items-center justify-between px-2 py-1">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-cyan-400 rounded-xl flex items-center justify-center font-extrabold text-xl text-white shadow-lg shadow-blue-500/20 shrink-0">
+            D
+          </div>
+          <div class="sidebar-text">
+            <span class="text-xl font-extrabold tracking-tight text-white block leading-tight">Doğnak</span>
+            <span class="text-[10px] block text-cyan-400 font-bold tracking-widest uppercase">Nakliye Yönetimi</span>
+          </div>
         </div>
-        <div>
-          <span class="text-xl font-extrabold tracking-tight text-white block leading-tight">Doğnak</span>
-          <span class="text-[10px] block text-cyan-400 font-bold tracking-widest uppercase">Nakliye Yönetimi</span>
-        </div>
+        <button onclick="toggleSidebar()" class="sidebar-text text-slate-400 hover:text-white p-1 rounded-lg hover:bg-app-cardHover transition" title="Menüyü Daralt">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
+        </button>
       </div>
 
-      <!-- Menü Listesi -->
+      <!-- Menü Butonları -->
       <nav class="space-y-1">
-        <div class="text-[10px] font-extrabold tracking-wider text-slate-500 uppercase px-3 mb-2">Çalışma Alanı</div>
+        <div class="sidebar-text text-[10px] font-extrabold tracking-wider text-slate-500 uppercase px-3 mb-2">Çalışma Alanı</div>
         
-        <button onclick="changePage('summary')" id="nav-summary" class="nav-item-active w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition">
+        <button onclick="changePage('summary')" id="nav-summary" class="nav-item-active sidebar-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition">
           <div class="flex items-center space-x-2.5">
-            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-            <span>Yönetici özeti</span>
+            <svg class="w-4 h-4 text-cyan-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+            <span class="sidebar-text">Yönetici özeti</span>
           </div>
         </button>
 
-        <button onclick="changePage('biga')" id="nav-biga" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-app-cardHover transition">
+        <button onclick="changePage('biga')" id="nav-biga" class="sidebar-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-app-cardHover transition">
           <div class="flex items-center space-x-2.5">
-            <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-            <span>Biga yüklemeleri</span>
+            <svg class="w-4 h-4 text-sky-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+            <span class="sidebar-text">Biga yüklemeleri</span>
           </div>
-          <span id="badge-biga-count" class="bg-sky-950/80 text-sky-400 border border-sky-800 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+          <span id="badge-biga-count" class="sidebar-text bg-sky-950/80 text-sky-400 border border-sky-800 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
         </button>
 
-        <button onclick="changePage('inegol')" id="nav-inegol" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-app-cardHover transition">
+        <button onclick="changePage('inegol')" id="nav-inegol" class="sidebar-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-app-cardHover transition">
           <div class="flex items-center space-x-2.5">
-            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-            <span>İnegöl yüklemeleri</span>
+            <svg class="w-4 h-4 text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span class="sidebar-text">İnegöl yüklemeleri</span>
           </div>
-          <span id="badge-inegol-count" class="bg-indigo-950/80 text-indigo-400 border border-indigo-800 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+          <span id="badge-inegol-count" class="sidebar-text bg-indigo-950/80 text-indigo-400 border border-indigo-800 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
         </button>
 
-        <button onclick="changePage('drivers')" id="nav-drivers" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-app-cardHover transition">
+        <button onclick="changePage('drivers')" id="nav-drivers" class="sidebar-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-app-cardHover transition">
           <div class="flex items-center space-x-2.5">
-            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-            <span>Şoförler</span>
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+            <span class="sidebar-text">Şoförler</span>
           </div>
         </button>
 
-        <button onclick="changePage('payments')" id="nav-payments" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-app-cardHover transition">
+        <button onclick="changePage('payments')" id="nav-payments" class="sidebar-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-app-cardHover transition">
           <div class="flex items-center space-x-2.5">
-            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <span>Ödemeler</span>
+            <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span class="sidebar-text">Ödemeler</span>
           </div>
-          <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+          <span class="sidebar-text w-2 h-2 rounded-full bg-amber-400"></span>
         </button>
       </nav>
     </div>
 
-    <!-- Alt Kullanıcı Profili -->
-    <div class="space-y-3 pt-4 border-t border-app-cardBorder">
-      <div class="bg-app-card/60 p-3 rounded-xl border border-app-cardBorder">
-        <div class="text-[11px] font-bold text-white flex items-center justify-between">
-          <span>Yardım mı lazım?</span>
-          <span class="text-cyan-400 font-extrabold">✦</span>
-        </div>
-        <p class="text-[10px] text-slate-400 mt-1">Doğnak nakliye modülü hakkında bilgi alın.</p>
-        <span class="text-[10px] text-cyan-400 font-bold block mt-1 hover:underline cursor-pointer">Yardım merkezine git ↗</span>
-      </div>
-
-      <div class="flex items-center justify-between px-2 pt-2 text-xs">
-        <div class="flex items-center space-x-2">
-          <div class="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-xs text-white">Y</div>
-          <div>
-            <div class="font-bold text-white text-xs">Yönetici</div>
-            <div id="connection-status" class="text-[10px] text-emerald-400 flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Sistem Canlı
-            </div>
+    <!-- Alt Profil -->
+    <div class="sidebar-text space-y-3 pt-4 border-t border-app-cardBorder">
+      <div class="flex items-center space-x-2 px-1">
+        <div class="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-xs text-white shrink-0">Y</div>
+        <div>
+          <div class="font-bold text-white text-xs">Yönetici</div>
+          <div id="connection-status" class="text-[10px] text-emerald-400 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Sistem Canlı
           </div>
         </div>
       </div>
@@ -132,79 +131,58 @@
   <!-- ========================================== -->
   <div class="flex-1 flex flex-col min-w-0">
     
-    <!-- Üst İnce Bar (Breadcrumb) -->
-    <header class="h-14 border-b border-app-cardBorder px-8 flex items-center justify-between shrink-0">
-      <div class="flex items-center space-x-2 text-xs text-slate-400">
+    <!-- Üst Bar (Breadcrumb & Aç/Kapa Butonu) -->
+    <header class="h-14 border-b border-app-cardBorder px-6 flex items-center justify-between shrink-0 bg-app-sidebar/40">
+      <div class="flex items-center space-x-3 text-xs text-slate-400">
+        <button onclick="toggleSidebar()" class="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-app-cardHover transition border border-app-cardBorder" title="Menüyü Aç/Kapat">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
         <span class="text-slate-500">Doğnak</span>
         <span>/</span>
         <span id="breadcrumb-title" class="text-white font-bold">Yönetici özeti</span>
       </div>
       <div class="flex items-center space-x-4">
-        <span id="live-clock" class="text-xs font-semibold text-slate-400 font-mono">10 Kasım 2026</span>
-        <span class="text-[11px] font-bold bg-amber-950/60 text-amber-300 border border-amber-800/80 px-2.5 py-1 rounded-md">
-          Canlı Veritabanı
+        <span id="live-clock" class="text-xs font-semibold text-slate-400 font-mono">11 Kasım 2026</span>
+        <span class="text-[11px] font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-800 px-2.5 py-1 rounded-md">
+          ● Canlı Sistem
         </span>
       </div>
     </header>
 
     <!-- ANA GÖVDE -->
-    <main class="p-8 flex-1 space-y-6 overflow-y-auto">
+    <main class="p-6 md:p-8 flex-1 space-y-6 overflow-y-auto">
 
       <!-- ========================================== -->
-      <!-- SAYFA 1: YÖNETİCİ ÖZETİ (GÖRSELİN BİREBİR AYNISI) -->
+      <!-- SAYFA 1: YÖNETİCİ ÖZETİ -->
       <!-- ========================================== -->
       <div id="page-summary" class="space-y-6">
         
-        <!-- Başlık & Aksiyon Butonları -->
+        <!-- Başlık & Rapor İndir -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
           <div>
-            <span class="text-[11px] font-extrabold uppercase tracking-widest text-cyan-400">10 KASIM 2026 SALI</span>
-            <h1 class="text-3xl font-extrabold text-white tracking-tight mt-1">Merhaba</h1>
-            <p class="text-xs text-slate-400 mt-0.5">İki deponun günlük operasyonları tek ekranda.</p>
+            <span class="text-[11px] font-extrabold uppercase tracking-widest text-cyan-400">GÜNLÜK SEVKİYAT & NAKLİYE OPERASYONU</span>
+            <h1 class="text-3xl font-extrabold text-white tracking-tight mt-1">Yönetici Paneli</h1>
+            <p class="text-xs text-slate-400 mt-0.5">Biga ve İnegöl depolarının tüm sefer ve hakediş analitiği.</p>
           </div>
-          <div class="flex items-center space-x-2">
-            <button onclick="exportToCSV()" class="bg-app-card hover:bg-app-cardHover border border-app-cardBorder text-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-sm">
-              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-              <span>Raporu indir</span>
-            </button>
-            <button onclick="changePage('biga')" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-lg shadow-blue-600/30">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-              <span>+ Sefer ekle</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Depo Hızlı Sekmeleri -->
-        <div class="flex items-center space-x-2 border-b border-app-cardBorder/60 pb-3 text-xs font-bold">
-          <button onclick="setSummaryDepotFilter('all')" id="btn-sum-depot-all" class="px-3.5 py-1.5 rounded-lg bg-blue-600 text-white flex items-center space-x-1.5 shadow-sm">
-            <span>✦ Tüm depolar</span>
-            <span id="pill-all-count" class="bg-blue-800/80 px-1.5 py-0.2 rounded text-[10px]">0</span>
-          </button>
-          <button onclick="setSummaryDepotFilter(1)" id="btn-sum-depot-biga" class="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-app-card transition flex items-center space-x-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
-            <span>Biga</span>
-            <span id="pill-biga-count" class="bg-app-card border border-app-cardBorder text-slate-400 px-1.5 py-0.2 rounded text-[10px]">0</span>
-          </button>
-          <button onclick="setSummaryDepotFilter(2)" id="btn-sum-depot-inegol" class="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-app-card transition flex items-center space-x-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
-            <span>İnegöl</span>
-            <span id="pill-inegol-count" class="bg-app-card border border-app-cardBorder text-slate-400 px-1.5 py-0.2 rounded text-[10px]">0</span>
+          <button onclick="exportToCSV()" class="bg-app-card hover:bg-app-cardHover border border-app-cardBorder text-slate-200 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-sm">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            <span>Raporu İndir (Excel/CSV)</span>
           </button>
         </div>
 
         <!-- TARİH ARALIĞI FİLTRE ÇUBUĞU -->
         <div class="bg-app-card border border-app-cardBorder rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
           <div>
-            <div class="text-xs font-extrabold text-white">Günlük ve tarih aralığı özeti</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">Haftalık, aylık veya seçtiğiniz tarih aralığını inceleyin</div>
+            <div class="text-xs font-extrabold text-white">Dönem & Tarih Aralığı Analizi</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Seçilen tarihler arasındaki seferler ve maliyetler anında hesaplanır</div>
           </div>
           <div class="flex flex-wrap items-center gap-3">
             <div class="flex items-center space-x-2 text-xs">
-              <span class="text-slate-400 text-[11px]">Başlangıç tarihi</span>
+              <span class="text-slate-400 text-[11px]">Başlangıç:</span>
               <input type="date" id="summary-start-date" onchange="applyDateRangeFilter()" class="bg-app-sidebar border border-app-cardBorder rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-blue-500 font-mono">
             </div>
             <div class="flex items-center space-x-2 text-xs">
-              <span class="text-slate-400 text-[11px]">Bitiş tarihi / günlük özet</span>
+              <span class="text-slate-400 text-[11px]">Bitiş:</span>
               <input type="date" id="summary-end-date" onchange="applyDateRangeFilter()" class="bg-app-sidebar border border-app-cardBorder rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-blue-500 font-mono">
             </div>
             <span id="date-range-badge" class="bg-blue-950/80 border border-blue-800 text-blue-300 text-xs font-bold px-3 py-1.5 rounded-lg font-mono">
@@ -213,194 +191,135 @@
           </div>
         </div>
 
-        <!-- 5'Lİ ÜST KPI KARTLARI (GÖRSELİN BİREBİR AYNISI) -->
+        <!-- 5'Lİ ÜST KPI KARTLARI -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
-          
-          <!-- Kart 1: Seçili Gün Seferi -->
           <div class="bg-app-card border border-app-cardBorder rounded-2xl p-4 flex flex-col justify-between">
-            <div class="flex justify-between items-center text-slate-400">
-              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Seçili gün seferi</span>
-              <span class="text-cyan-400 text-sm">⇄</span>
-            </div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Seçili gün seferi</span>
             <div class="mt-4 flex items-baseline justify-between">
               <span id="kpi-day-trips" class="text-3xl font-extrabold text-white font-mono">0</span>
-              <div class="text-right">
-                <span class="text-[10px] font-bold text-slate-400 block">Günlük</span>
-                <span id="kpi-day-label" class="text-[10px] text-cyan-400 font-mono">Bugün</span>
-              </div>
+              <span id="kpi-day-label" class="text-[10px] text-cyan-400 font-mono">Bugün</span>
             </div>
           </div>
-
-          <!-- Kart 2: Seçilen Aralıkta Sefer -->
           <div class="bg-app-card border border-app-cardBorder rounded-2xl p-4 flex flex-col justify-between">
-            <div class="flex justify-between items-center text-slate-400">
-              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Seçilen aralıkta sefer</span>
-              <span class="text-blue-400 text-sm">▦</span>
-            </div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Aralıktaki Toplam Sefer</span>
             <div class="mt-4 flex items-baseline justify-between">
               <span id="kpi-range-trips" class="text-3xl font-extrabold text-white font-mono">0</span>
-              <div class="text-right">
-                <span class="text-[10px] font-bold text-slate-400 block">Dönem</span>
-                <span class="text-[10px] text-slate-400 font-mono">Seçili Aralık</span>
-              </div>
+              <span class="text-[10px] text-slate-400">Seçili Aralık</span>
             </div>
           </div>
-
-          <!-- Kart 3: Biga Seçilen Aralık -->
           <div class="bg-app-card border border-app-cardBorder rounded-2xl p-4 flex flex-col justify-between">
-            <div class="flex justify-between items-center text-slate-400">
-              <span class="text-[11px] font-bold uppercase tracking-wider text-sky-400">Biga · seçilen aralık</span>
-              <span class="text-sky-400 text-sm">⇡</span>
-            </div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-sky-400">Biga Seferleri</span>
             <div class="mt-4 flex items-baseline justify-between">
               <span id="kpi-biga-range-trips" class="text-3xl font-extrabold text-white font-mono">0</span>
-              <span class="text-[10px] text-slate-400 font-medium">Biga dönem seferi</span>
+              <span class="text-[10px] text-slate-400">Biga Depo</span>
             </div>
           </div>
-
-          <!-- Kart 4: İnegöl Seçilen Aralık -->
           <div class="bg-app-card border border-app-cardBorder rounded-2xl p-4 flex flex-col justify-between">
-            <div class="flex justify-between items-center text-slate-400">
-              <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-400">İnegöl · seçilen aralık</span>
-              <span class="text-indigo-400 text-sm">⇡</span>
-            </div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-400">İnegöl Seferleri</span>
             <div class="mt-4 flex items-baseline justify-between">
               <span id="kpi-inegol-range-trips" class="text-3xl font-extrabold text-white font-mono">0</span>
-              <span class="text-[10px] text-slate-400 font-medium">İnegöl dönem seferi</span>
+              <span class="text-[10px] text-slate-400">İnegöl Depo</span>
             </div>
           </div>
-
-          <!-- Kart 5: Ödenmeyen Sefer -->
           <div class="bg-app-card border border-app-cardBorder rounded-2xl p-4 flex flex-col justify-between">
-            <div class="flex justify-between items-center text-slate-400">
-              <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400">Ödenmeyen sefer</span>
-              <span class="text-amber-400 text-sm">₺</span>
-            </div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400">Ödenmeyen Seferler</span>
             <div class="mt-4">
               <div class="flex items-baseline space-x-2">
                 <span id="kpi-unpaid-count" class="text-3xl font-extrabold text-amber-400 font-mono">0</span>
                 <span id="kpi-unpaid-amount" class="text-xs font-bold text-amber-300 font-mono">₺ 0</span>
               </div>
-              <span class="text-[10px] text-slate-400 block mt-0.5">Seçilen tarih aralığı</span>
+              <span class="text-[10px] text-slate-400 block mt-0.5">Ödeme bekliyor</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEPO BAZINDA FİNANS ÖZETİ -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          
+          <!-- BİGA DEPOSU -->
+          <div class="bg-app-card border border-app-cardBorder rounded-2xl p-5 space-y-4">
+            <div class="flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-sky-400"></span>
+              <h4 class="text-sm font-extrabold text-white">Biga Deposu Finans Özeti</h4>
+            </div>
+            <div class="grid grid-cols-2 gap-6 pt-2 border-t border-app-cardBorder/60 text-xs">
+              <div class="space-y-2.5">
+                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Seçilen Gün</span>
+                <div class="flex justify-between text-slate-300"><span>Sefer Sayısı:</span><strong id="biga-day-count" class="font-mono text-white">0</strong></div>
+                <div class="flex justify-between text-slate-300"><span>Şoföre Ödenen:</span><strong id="biga-day-paid" class="font-mono text-emerald-400">₺ 0</strong></div>
+                <div class="flex justify-between text-slate-300"><span>Ödenmeyen:</span><strong id="biga-day-unpaid" class="font-mono text-amber-400">₺ 0</strong></div>
+                <div class="flex justify-between pt-2 border-t border-app-cardBorder text-slate-100 font-bold"><span>Toplam Gider:</span><strong id="biga-day-total" class="font-mono text-white">₺ 0</strong></div>
+              </div>
+              <div class="space-y-2.5 border-l border-app-cardBorder/60 pl-6">
+                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Seçilen Tarih Aralığı</span>
+                <div class="flex justify-between text-slate-300"><span>Sefer Sayısı:</span><strong id="biga-range-count" class="font-mono text-white">0</strong></div>
+                <div class="flex justify-between text-slate-300"><span>Şoföre Ödenen:</span><strong id="biga-range-paid" class="font-mono text-emerald-400">₺ 0</strong></div>
+                <div class="flex justify-between text-slate-300"><span>Ödenmeyen:</span><strong id="biga-range-unpaid" class="font-mono text-amber-400">₺ 0</strong></div>
+                <div class="flex justify-between pt-2 border-t border-app-cardBorder text-slate-100 font-bold"><span>Toplam Gider:</span><strong id="biga-range-total" class="font-mono text-white">₺ 0</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- İNEGÖL DEPOSU -->
+          <div class="bg-app-card border border-app-cardBorder rounded-2xl p-5 space-y-4">
+            <div class="flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-indigo-400"></span>
+              <h4 class="text-sm font-extrabold text-white">İnegöl Deposu Finans Özeti</h4>
+            </div>
+            <div class="grid grid-cols-2 gap-6 pt-2 border-t border-app-cardBorder/60 text-xs">
+              <div class="space-y-2.5">
+                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Seçilen Gün</span>
+                <div class="flex justify-between text-slate-300"><span>Sefer Sayısı:</span><strong id="inegol-day-count" class="font-mono text-white">0</strong></div>
+                <div class="flex justify-between text-slate-300"><span>Şoföre Ödenen:</span><strong id="inegol-day-paid" class="font-mono text-emerald-400">₺ 0</strong></div>
+                <div class="flex justify-between text-slate-300"><span>Ödenmeyen:</span><strong id="inegol-day-unpaid" class="font-mono text-amber-400">₺ 0</strong></div>
+                <div class="flex justify-between pt-2 border-t border-app-cardBorder text-slate-100 font-bold"><span>Toplam Gider:</span><strong id="inegol-day-total" class="font-mono text-white">₺ 0</strong></div>
+              </div>
+              <div class="space-y-2.5 border-l border-app-cardBorder/60 pl-6">
+                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Seçilen Tarih Aralığı</span>
+                <div class="flex justify-between text-slate-300"><span>Sefer Sayısı:</span><strong id="inegol-range-count" class="font-mono text-white">0</strong></div>
+                <div class="flex justify-between text-slate-300"><span>Şoföre Ödenen:</span><strong id="inegol-range-paid" class="font-mono text-emerald-400">₺ 0</strong></div>
+                <div class="flex justify-between text-slate-300"><span>Ödenmeyen:</span><strong id="inegol-range-unpaid" class="font-mono text-amber-400">₺ 0</strong></div>
+                <div class="flex justify-between pt-2 border-t border-app-cardBorder text-slate-100 font-bold"><span>Toplam Gider:</span><strong id="inegol-range-total" class="font-mono text-white">₺ 0</strong></div>
+              </div>
             </div>
           </div>
 
         </div>
 
-        <!-- DEPO BAZINDA ÖDEME VE PAKET ÖZETİ (GÖRSELİN BİREBİR AYNISI) -->
-        <div class="space-y-3">
-          <div>
-            <h3 class="text-base font-extrabold text-white">Depo bazında ödeme ve paket özeti</h3>
-            <p class="text-[11px] text-slate-400">Özetler Biga ve İnegöl için ayrı hesaplanır.</p>
+        <!-- YENİ BÖLÜM: GÜZERGAH & BAYİ ANALİTİĞİ (EN ÇOK VE EN AZ SEFER YAPILAN NOKTALAR) -->
+        <div class="bg-app-card border border-app-cardBorder rounded-2xl p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+            <div>
+              <h3 class="text-base font-extrabold text-white">Seçilen Dönem Güzergâh ve Bayi Sefer Analizi</h3>
+              <p class="text-[11px] text-slate-400">Seçilen tarih aralığında en çok ve en az yükleme yapılan bayiler ve nakliye tutarları</p>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] text-slate-400 block">Dönem Toplam Nakliye Tutarı</span>
+              <span id="route-total-amount" class="text-base font-extrabold text-cyan-400 font-mono">₺ 0</span>
+            </div>
           </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-3 border-t border-app-cardBorder">
             
-            <!-- BİGA DEPOSU FİNANS KUTUSU -->
-            <div class="bg-app-card border border-app-cardBorder rounded-2xl p-5 space-y-4">
-              <div class="flex items-center space-x-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-sky-400"></span>
-                <h4 class="text-sm font-extrabold text-white">Biga deposu</h4>
+            <!-- En Fazla Sefer Yapılan Bayiler -->
+            <div class="space-y-2">
+              <div class="flex items-center space-x-2 text-xs font-bold text-emerald-400">
+                <span>▲</span>
+                <span>En Fazla Sefer Yapılan Bayiler / Güzergâhlar</span>
               </div>
-
-              <div class="grid grid-cols-2 gap-6 pt-2 border-t border-app-cardBorder/60 text-xs">
-                <!-- Seçilen Gün Sütunu -->
-                <div class="space-y-2.5">
-                  <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Seçilen gün</span>
-                  
-                  <div class="flex justify-between text-slate-300">
-                    <span>Paket / Sefer:</span>
-                    <strong id="biga-day-count" class="font-mono text-white">0</strong>
-                  </div>
-                  <div class="flex justify-between text-slate-300">
-                    <span>Şoföre ödenen:</span>
-                    <strong id="biga-day-paid" class="font-mono text-emerald-400">₺ 0</strong>
-                  </div>
-                  <div class="flex justify-between text-slate-300">
-                    <span>Şoföre ödenmeyen:</span>
-                    <strong id="biga-day-unpaid" class="font-mono text-amber-400">₺ 0</strong>
-                  </div>
-                  <div class="flex justify-between pt-2 border-t border-app-cardBorder text-slate-100 font-bold">
-                    <span>Toplam gider:</span>
-                    <strong id="biga-day-total" class="font-mono text-white">₺ 0</strong>
-                  </div>
-                </div>
-
-                <!-- Seçilen Tarih Aralığı Sütunu -->
-                <div class="space-y-2.5 border-l border-app-cardBorder/60 pl-6">
-                  <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Seçilen tarih aralığı</span>
-                  
-                  <div class="flex justify-between text-slate-300">
-                    <span>Paket / Sefer:</span>
-                    <strong id="biga-range-count" class="font-mono text-white">0</strong>
-                  </div>
-                  <div class="flex justify-between text-slate-300">
-                    <span>Şoföre ödenen:</span>
-                    <strong id="biga-range-paid" class="font-mono text-emerald-400">₺ 0</strong>
-                  </div>
-                  <div class="flex justify-between text-slate-300">
-                    <span>Şoföre ödenmeyen:</span>
-                    <strong id="biga-range-unpaid" class="font-mono text-amber-400">₺ 0</strong>
-                  </div>
-                  <div class="flex justify-between pt-2 border-t border-app-cardBorder text-slate-100 font-bold">
-                    <span>Toplam gider:</span>
-                    <strong id="biga-range-total" class="font-mono text-white">₺ 0</strong>
-                  </div>
-                </div>
+              <div id="top-destinations-list" class="space-y-2 text-xs">
+                <div class="p-3 bg-app-sidebar rounded-xl text-slate-400 text-center">Henüz veri yok.</div>
               </div>
             </div>
 
-            <!-- İNEGÖL DEPOSU FİNANS KUTUSU -->
-            <div class="bg-app-card border border-app-cardBorder rounded-2xl p-5 space-y-4">
-              <div class="flex items-center space-x-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-indigo-400"></span>
-                <h4 class="text-sm font-extrabold text-white">İnegöl deposu</h4>
+            <!-- En Az Sefer Yapılan Bayiler -->
+            <div class="space-y-2">
+              <div class="flex items-center space-x-2 text-xs font-bold text-rose-400">
+                <span>▼</span>
+                <span>En Az Sefer Yapılan Bayiler / Seyrek Noktalar</span>
               </div>
-
-              <div class="grid grid-cols-2 gap-6 pt-2 border-t border-app-cardBorder/60 text-xs">
-                <!-- Seçilen Gün Sütunu -->
-                <div class="space-y-2.5">
-                  <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Seçilen gün</span>
-                  
-                  <div class="flex justify-between text-slate-300">
-                    <span>Paket / Sefer:</span>
-                    <strong id="inegol-day-count" class="font-mono text-white">0</strong>
-                  </div>
-                  <div class="flex justify-between text-slate-300">
-                    <span>Şoföre ödenen:</span>
-                    <strong id="inegol-day-paid" class="font-mono text-emerald-400">₺ 0</strong>
-                  </div>
-                  <div class="flex justify-between text-slate-300">
-                    <span>Şoföre ödenmeyen:</span>
-                    <strong id="inegol-day-unpaid" class="font-mono text-amber-400">₺ 0</strong>
-                  </div>
-                  <div class="flex justify-between pt-2 border-t border-app-cardBorder text-slate-100 font-bold">
-                    <span>Toplam gider:</span>
-                    <strong id="inegol-day-total" class="font-mono text-white">₺ 0</strong>
-                  </div>
-                </div>
-
-                <!-- Seçilen Tarih Aralığı Sütunu -->
-                <div class="space-y-2.5 border-l border-app-cardBorder/60 pl-6">
-                  <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Seçilen tarih aralığı</span>
-                  
-                  <div class="flex justify-between text-slate-300">
-                    <span>Paket / Sefer:</span>
-                    <strong id="inegol-range-count" class="font-mono text-white">0</strong>
-                  </div>
-                  <div class="flex justify-between text-slate-300">
-                    <span>Şoföre ödenen:</span>
-                    <strong id="inegol-range-paid" class="font-mono text-emerald-400">₺ 0</strong>
-                  </div>
-                  <div class="flex justify-between text-slate-300">
-                    <span>Şoföre ödenmeyen:</span>
-                    <strong id="inegol-range-unpaid" class="font-mono text-amber-400">₺ 0</strong>
-                  </div>
-                  <div class="flex justify-between pt-2 border-t border-app-cardBorder text-slate-100 font-bold">
-                    <span>Toplam gider:</span>
-                    <strong id="inegol-range-total" class="font-mono text-white">₺ 0</strong>
-                  </div>
-                </div>
+              <div id="bottom-destinations-list" class="space-y-2 text-xs">
+                <div class="p-3 bg-app-sidebar rounded-xl text-slate-400 text-center">Henüz veri yok.</div>
               </div>
             </div>
 
@@ -410,7 +329,7 @@
       </div>
 
       <!-- ========================================== -->
-      <!-- SAYFA 2: BİGA YÜKLEMELERİ -->
+      <!-- SAYFA 2: BİGA YÜKLEMELERİ (TARİH ARALIKLI) -->
       <!-- ========================================== -->
       <div id="page-biga" class="hidden space-y-5">
         <div class="bg-gradient-to-r from-sky-900 to-blue-900 rounded-2xl p-6 border border-sky-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -419,18 +338,26 @@
             <h2 class="text-2xl font-extrabold text-white mt-2">Biga Günlük Yüklemeleri</h2>
             <p class="text-xs text-sky-200">Günlük Biga Excel dosyasını buraya yükleyin; veriler kümüle olarak kaydedilir.</p>
           </div>
-          <label class="cursor-pointer bg-white text-blue-900 hover:bg-sky-50 px-5 py-3 rounded-xl font-bold text-xs shadow-lg transition flex items-center space-x-2">
+          <label class="cursor-pointer bg-white text-blue-900 hover:bg-sky-50 px-5 py-3 rounded-xl font-bold text-xs shadow-lg transition flex items-center space-x-2 shrink-0">
             <span>📁 Biga Günlük Excel Yükle</span>
             <input type="file" accept=".xlsx, .xls" class="hidden" onchange="handleExcelUpload(event, 'Biga Depo')">
           </label>
         </div>
 
-        <!-- Filtreler -->
-        <div class="bg-app-card rounded-xl p-4 border border-app-cardBorder flex flex-wrap items-center gap-3">
-          <input type="date" id="filter-biga-date" onchange="filterDepotTable('Biga Depo')" class="bg-app-sidebar border border-app-cardBorder rounded-lg px-3 py-1.5 text-xs text-white">
-          <input type="text" id="filter-biga-plate" onkeyup="filterDepotTable('Biga Depo')" placeholder="Plaka Ara..." class="bg-app-sidebar border border-app-cardBorder rounded-lg px-3 py-1.5 text-xs text-white w-36">
-          <input type="text" id="filter-biga-driver" onkeyup="filterDepotTable('Biga Depo')" placeholder="Şoför Ara..." class="bg-app-sidebar border border-app-cardBorder rounded-lg px-3 py-1.5 text-xs text-white w-36">
-          <button onclick="clearDepotFilter('Biga Depo')" class="text-xs text-sky-400 font-bold hover:underline">Filtreyi Temizle</button>
+        <!-- Biga Tarih Aralıklı Filtre Barı -->
+        <div class="bg-app-card rounded-xl p-4 border border-app-cardBorder flex flex-wrap items-center gap-3 text-xs">
+          <div class="flex items-center space-x-1.5">
+            <span class="text-slate-400 text-[11px]">Başlangıç:</span>
+            <input type="date" id="filter-biga-start-date" onchange="filterDepotTable('Biga Depo')" class="bg-app-sidebar border border-app-cardBorder rounded-lg px-2.5 py-1.5 text-xs text-white">
+          </div>
+          <div class="flex items-center space-x-1.5">
+            <span class="text-slate-400 text-[11px]">Bitiş:</span>
+            <input type="date" id="filter-biga-end-date" onchange="filterDepotTable('Biga Depo')" class="bg-app-sidebar border border-app-cardBorder rounded-lg px-2.5 py-1.5 text-xs text-white">
+          </div>
+          <input type="text" id="filter-biga-plate" onkeyup="filterDepotTable('Biga Depo')" placeholder="Plaka Ara..." class="bg-app-sidebar border border-app-cardBorder rounded-lg px-3 py-1.5 text-xs text-white w-32">
+          <input type="text" id="filter-biga-driver" onkeyup="filterDepotTable('Biga Depo')" placeholder="Şoför Ara..." class="bg-app-sidebar border border-app-cardBorder rounded-lg px-3 py-1.5 text-xs text-white w-32">
+          <input type="text" id="filter-biga-dealer" onkeyup="filterDepotTable('Biga Depo')" placeholder="Bayi / Güzergâh..." class="bg-app-sidebar border border-app-cardBorder rounded-lg px-3 py-1.5 text-xs text-white w-36">
+          <button onclick="clearDepotFilter('Biga Depo')" class="text-xs text-sky-400 font-bold hover:underline ml-auto">Filtreyi Temizle</button>
         </div>
 
         <!-- Biga Tablosu -->
@@ -439,6 +366,7 @@
             <thead class="bg-app-sidebar border-b border-app-cardBorder text-[11px] font-bold text-slate-400 uppercase">
               <tr>
                 <th class="py-3 px-4">Sefer Tarihi</th>
+                <th class="py-3 px-4">Güzergâh / Bayi</th>
                 <th class="py-3 px-4">Plaka</th>
                 <th class="py-3 px-4">Şoför</th>
                 <th class="py-3 px-4">Tutar</th>
@@ -452,7 +380,7 @@
       </div>
 
       <!-- ========================================== -->
-      <!-- SAYFA 3: İNEGÖL YÜKLEMELERİ -->
+      <!-- SAYFA 3: İNEGÖL YÜKLEMELERİ (TARİH ARALIKLI) -->
       <!-- ========================================== -->
       <div id="page-inegol" class="hidden space-y-5">
         <div class="bg-gradient-to-r from-indigo-950 to-purple-900 rounded-2xl p-6 border border-indigo-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -461,18 +389,26 @@
             <h2 class="text-2xl font-extrabold text-white mt-2">İnegöl Günlük Yüklemeleri</h2>
             <p class="text-xs text-indigo-200">Günlük İnegöl Excel dosyasını buraya yükleyin; veriler kümüle olarak kaydedilir.</p>
           </div>
-          <label class="cursor-pointer bg-white text-indigo-900 hover:bg-indigo-50 px-5 py-3 rounded-xl font-bold text-xs shadow-lg transition flex items-center space-x-2">
+          <label class="cursor-pointer bg-white text-indigo-900 hover:bg-indigo-50 px-5 py-3 rounded-xl font-bold text-xs shadow-lg transition flex items-center space-x-2 shrink-0">
             <span>📁 İnegöl Günlük Excel Yükle</span>
             <input type="file" accept=".xlsx, .xls" class="hidden" onchange="handleExcelUpload(event, 'İnegöl Depo')">
           </label>
         </div>
 
-        <!-- Filtreler -->
-        <div class="bg-app-card rounded-xl p-4 border border-app-cardBorder flex flex-wrap items-center gap-3">
-          <input type="date" id="filter-inegol-date" onchange="filterDepotTable('İnegöl Depo')" class="bg-app-sidebar border border-app-cardBorder rounded-lg px-3 py-1.5 text-xs text-white">
-          <input type="text" id="filter-inegol-plate" onkeyup="filterDepotTable('İnegöl Depo')" placeholder="Plaka Ara..." class="bg-app-sidebar border border-app-cardBorder rounded-lg px-3 py-1.5 text-xs text-white w-36">
-          <input type="text" id="filter-inegol-driver" onkeyup="filterDepotTable('İnegöl Depo')" placeholder="Şoför Ara..." class="bg-app-sidebar border border-app-cardBorder rounded-lg px-3 py-1.5 text-xs text-white w-36">
-          <button onclick="clearDepotFilter('İnegöl Depo')" class="text-xs text-indigo-400 font-bold hover:underline">Filtreyi Temizle</button>
+        <!-- İnegöl Tarih Aralıklı Filtre Barı -->
+        <div class="bg-app-card rounded-xl p-4 border border-app-cardBorder flex flex-wrap items-center gap-3 text-xs">
+          <div class="flex items-center space-x-1.5">
+            <span class="text-slate-400 text-[11px]">Başlangıç:</span>
+            <input type="date" id="filter-inegol-start-date" onchange="filterDepotTable('İnegöl Depo')" class="bg-app-sidebar border border-app-cardBorder rounded-lg px-2.5 py-1.5 text-xs text-white">
+          </div>
+          <div class="flex items-center space-x-1.5">
+            <span class="text-slate-400 text-[11px]">Bitiş:</span>
+            <input type="date" id="filter-inegol-end-date" onchange="filterDepotTable('İnegöl Depo')" class="bg-app-sidebar border border-app-cardBorder rounded-lg px-2.5 py-1.5 text-xs text-white">
+          </div>
+          <input type="text" id="filter-inegol-plate" onkeyup="filterDepotTable('İnegöl Depo')" placeholder="Plaka Ara..." class="bg-app-sidebar border border-app-cardBorder rounded-lg px-3 py-1.5 text-xs text-white w-32">
+          <input type="text" id="filter-inegol-driver" onkeyup="filterDepotTable('İnegöl Depo')" placeholder="Şoför Ara..." class="bg-app-sidebar border border-app-cardBorder rounded-lg px-3 py-1.5 text-xs text-white w-32">
+          <input type="text" id="filter-inegol-dealer" onkeyup="filterDepotTable('İnegöl Depo')" placeholder="Bayi / Güzergâh..." class="bg-app-sidebar border border-app-cardBorder rounded-lg px-3 py-1.5 text-xs text-white w-36">
+          <button onclick="clearDepotFilter('İnegöl Depo')" class="text-xs text-indigo-400 font-bold hover:underline ml-auto">Filtreyi Temizle</button>
         </div>
 
         <!-- İnegöl Tablosu -->
@@ -481,6 +417,7 @@
             <thead class="bg-app-sidebar border-b border-app-cardBorder text-[11px] font-bold text-slate-400 uppercase">
               <tr>
                 <th class="py-3 px-4">Sefer Tarihi</th>
+                <th class="py-3 px-4">Güzergâh / Bayi</th>
                 <th class="py-3 px-4">Plaka</th>
                 <th class="py-3 px-4">Şoför</th>
                 <th class="py-3 px-4">Tutar</th>
@@ -494,31 +431,40 @@
       </div>
 
       <!-- ========================================== -->
-      <!-- SAYFA 4: ŞOFÖRLER -->
+      <!-- SAYFA 4: ŞOFÖRLER (AD VE PLAKA İLE ARAMALI) -->
       <!-- ========================================== -->
       <div id="page-drivers" class="hidden space-y-5">
-        <div class="bg-app-card p-5 rounded-2xl border border-app-cardBorder flex justify-between items-center">
+        <div class="bg-app-card p-5 rounded-2xl border border-app-cardBorder flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h2 class="text-lg font-extrabold text-white">Kayıtlı Şoför Havuzu</h2>
-            <p class="text-xs text-slate-400">Yüklemelerden otomatik toplanan şoförler</p>
+            <p class="text-xs text-slate-400">Yüklemelerden otomatik derlenen şoför ve plaka listesi</p>
           </div>
-          <div class="flex gap-2">
-            <button onclick="filterDrivers('all')" id="btn-drv-all" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white">Tümü</button>
-            <button onclick="filterDrivers('Biga Depo')" id="btn-drv-biga" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-app-sidebar text-slate-300">Biga</button>
-            <button onclick="filterDrivers('İnegöl Depo')" id="btn-drv-inegol" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-app-sidebar text-slate-300">İnegöl</button>
+          
+          <!-- Canlı Arama Kutusu -->
+          <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+            <div class="relative flex-1 md:w-64">
+              <input type="text" id="driver-search-input" onkeyup="filterDriversLive()" placeholder="Şoför adı veya plaka ara..." class="w-full bg-app-sidebar border border-app-cardBorder rounded-xl pl-8 pr-3 py-2 text-xs text-white focus:outline-blue-500">
+              <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <div class="flex gap-1.5 text-xs font-bold">
+              <button onclick="setDriverDepotFilter('all')" id="btn-drv-all" class="px-3 py-2 rounded-xl bg-blue-600 text-white">Tümü</button>
+              <button onclick="setDriverDepotFilter('Biga Depo')" id="btn-drv-biga" class="px-3 py-2 rounded-xl bg-app-sidebar border border-app-cardBorder text-slate-300">Biga</button>
+              <button onclick="setDriverDepotFilter('İnegöl Depo')" id="btn-drv-inegol" class="px-3 py-2 rounded-xl bg-app-sidebar border border-app-cardBorder text-slate-300">İnegöl</button>
+            </div>
           </div>
         </div>
+
         <div id="drivers-container" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
       </div>
 
       <!-- ========================================== -->
-      <!-- SAYFA 5: ÖDEMELER (MUHASEBE ÖZEL SAYFASI) -->
+      <!-- SAYFA 5: ÖDEMELER -->
       <!-- ========================================== -->
       <div id="page-payments" class="hidden space-y-5">
         <div class="bg-app-card p-5 rounded-2xl border border-app-cardBorder flex flex-wrap justify-between items-center gap-4">
           <div>
             <h2 class="text-lg font-extrabold text-white">Tüm Sefer Ödemeleri</h2>
-            <p class="text-xs text-slate-400">Biga ve İnegöl şoför hakediş ve dekont arşivi</p>
+            <p class="text-xs text-slate-400">Şoför hakedişleri ve dekont arşivi</p>
           </div>
           <div class="flex items-center space-x-2 text-xs">
             <button onclick="filterPaymentList('all')" id="pay-btn-all" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg font-bold">Tümü</button>
@@ -533,6 +479,7 @@
               <tr>
                 <th class="py-3 px-4">Sefer Tarihi</th>
                 <th class="py-3 px-4">Depo</th>
+                <th class="py-3 px-4">Güzergâh / Bayi</th>
                 <th class="py-3 px-4">Plaka</th>
                 <th class="py-3 px-4">Şoför</th>
                 <th class="py-3 px-4">Hakediş</th>
@@ -548,9 +495,7 @@
     </main>
   </div>
 
-  <!-- ========================================== -->
-  <!-- MODAL: ÖDEME YAP VE DEKONT YÜKLE (KESİN ÇÖZÜM) -->
-  <!-- ========================================== -->
+  <!-- MODAL: ÖDEME YAP VE DEKONT YÜKLE -->
   <div id="payment-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
     <div class="bg-app-card border border-app-cardBorder rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
       <div class="flex justify-between items-center border-b border-app-cardBorder pb-3">
@@ -578,15 +523,19 @@
     </div>
   </div>
 
-  <!-- MODAL: DÜZENLEME (PLAKA / ŞOFÖR DEĞİŞTİR) -->
+  <!-- MODAL: DÜZENLEME -->
   <div id="edit-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
     <div class="bg-app-card border border-app-cardBorder rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
       <div class="flex justify-between items-center border-b border-app-cardBorder pb-3">
-        <h3 class="font-extrabold text-white text-sm">Plaka / Şoför Değiştir</h3>
+        <h3 class="font-extrabold text-white text-sm">Sefer Bilgisi Güncelle</h3>
         <button onclick="closeModal('edit-modal')" class="text-slate-400 hover:text-white text-xl font-bold">&times;</button>
       </div>
       <form onsubmit="submitEdit(event)" class="space-y-3 text-xs">
         <input type="hidden" id="edit-trip-id">
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Güzergâh / Bayi Adı</label>
+          <input type="text" id="edit-dealer-val" class="w-full bg-app-sidebar border border-app-cardBorder rounded-lg p-2 font-bold text-white focus:outline-blue-500">
+        </div>
         <div>
           <label class="block font-bold text-slate-300 mb-1">Araç Plakası</label>
           <input type="text" id="edit-plate-val" required class="w-full bg-app-sidebar border border-app-cardBorder rounded-lg p-2 font-mono font-bold text-white uppercase focus:outline-blue-500">
@@ -602,29 +551,40 @@
     </div>
   </div>
 
-  <!-- ========================================== -->
-  <!-- SİSTEMİN ÇEKİRDEK JAVASCRIPT KODLARI -->
-  <!-- ========================================== -->
+  <!-- JAVASCRIPT MOTORU -->
   <script>
     const SUPABASE_URL = 'https://bmliyzujfblvztnhvbwi.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_5jM9tC4mZ9AzdijPGcN_KQ_V4a4UbKS';
 
     let db = null;
     let allTrips = [];
-    let summaryDepotFilter = 'all'; // 'all', 1 (Biga), 2 (İnegöl)
+    let activeDriverDepot = 'all';
 
-    // Başlangıç Kurulumu
+    // Menü Aç/Kapat (Collapsible Sidebar)
+    function toggleSidebar() {
+      const sidebar = document.getElementById('main-sidebar');
+      sidebar.classList.toggle('sidebar-collapsed');
+    }
+
     function initApp() {
       const clientCreator = (window.supabase && window.supabase.createClient) || (typeof supabase !== 'undefined' && supabase.createClient);
       if (clientCreator) {
         db = clientCreator(SUPABASE_URL, SUPABASE_ANON_KEY);
-        document.getElementById('connection-status').innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Veritabanı Bağlı';
         
-        // Varsayılan Tarihleri Ata (Ayın 1'inden bugüne)
+        // Varsayılan Tarihleri Ata (Ayın ilk gününden bugüne)
         const today = new Date().toISOString().split('T')[0];
         const firstDayOfMonth = today.slice(0, 8) + '01';
+        
+        // Yönetici Özeti Tarihleri
         document.getElementById('summary-start-date').value = firstDayOfMonth;
         document.getElementById('summary-end-date').value = today;
+
+        // Biga ve İnegöl Tarihleri
+        document.getElementById('filter-biga-start-date').value = firstDayOfMonth;
+        document.getElementById('filter-biga-end-date').value = today;
+        document.getElementById('filter-inegol-start-date').value = firstDayOfMonth;
+        document.getElementById('filter-inegol-end-date').value = today;
+
         document.getElementById('live-clock').innerText = new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
 
         fetchAndRenderAll();
@@ -634,17 +594,16 @@
     }
     initApp();
 
-    // Sayfa Değiştirici
     function changePage(pageId) {
       ['summary', 'biga', 'inegol', 'drivers', 'payments'].forEach(p => {
         document.getElementById('page-' + p).classList.add('hidden');
         const btn = document.getElementById('nav-' + p);
-        if (btn) btn.className = 'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-app-cardHover transition';
+        if (btn) btn.className = 'sidebar-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-app-cardHover transition';
       });
 
       document.getElementById('page-' + pageId).classList.remove('hidden');
       const activeBtn = document.getElementById('nav-' + pageId);
-      if (activeBtn) activeBtn.className = 'nav-item-active w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition';
+      if (activeBtn) activeBtn.className = 'nav-item-active sidebar-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition';
 
       const titles = {
         summary: 'Yönetici özeti',
@@ -656,9 +615,6 @@
       document.getElementById('breadcrumb-title').innerText = titles[pageId] || 'Panel';
     }
 
-    // ==========================================
-    // VERİLERİ ÇEKME & HESAPLAMA MOTORU
-    // ==========================================
     async function fetchAndRenderAll() {
       if (!db) return;
       try {
@@ -673,20 +629,16 @@
           const p = (t.payments && t.payments[0]) || t.payments || {};
           return {
             ...t,
+            dealer_name: t.dealer_name || 'Genel Sevk',
             is_paid: p.is_paid === true,
             paid_amount: p.paid_amount || t.amount || 0,
             receipt_url: p.receipt_url || null
           };
         });
 
-        // Sol Menü Rozetlerini Güncelle
-        const bigaCount = allTrips.filter(t => t.warehouse_id === 1).length;
-        const inegolCount = allTrips.filter(t => t.warehouse_id === 2).length;
-        document.getElementById('badge-biga-count').innerText = bigaCount;
-        document.getElementById('badge-inegol-count').innerText = inegolCount;
-        document.getElementById('pill-all-count').innerText = allTrips.length;
-        document.getElementById('pill-biga-count').innerText = bigaCount;
-        document.getElementById('pill-inegol-count').innerText = inegolCount;
+        // Sol Menü Sayaçları
+        document.getElementById('badge-biga-count').innerText = allTrips.filter(t => t.warehouse_id === 1).length;
+        document.getElementById('badge-inegol-count').innerText = allTrips.filter(t => t.warehouse_id === 2).length;
 
         applyDateRangeFilter();
         renderDepotTables();
@@ -697,7 +649,9 @@
       }
     }
 
-    // Tarih Aralığına Göre Yönetici Özetini Hesaplama
+    // ==========================================
+    // YÖNETİCİ ÖZETİ & GÜZERGAH ANALİTİĞİ
+    // ==========================================
     function applyDateRangeFilter() {
       const startDate = document.getElementById('summary-start-date').value;
       const endDate = document.getElementById('summary-end-date').value;
@@ -706,40 +660,30 @@
         document.getElementById('date-range-badge').innerText = `${startDate} – ${endDate}`;
       }
 
-      // Seçili Gün (Bitiş Tarihi olarak kabul edilir)
       const selectedDay = endDate || new Date().toISOString().split('T')[0];
       document.getElementById('kpi-day-label').innerText = selectedDay;
 
-      // 1. Seçili Gün Verileri
       const dayTrips = allTrips.filter(t => t.trip_date === selectedDay);
-      // 2. Seçilen Tarih Aralığı Verileri
       const rangeTrips = allTrips.filter(t => {
         if (startDate && t.trip_date < startDate) return false;
         if (endDate && t.trip_date > endDate) return false;
         return true;
       });
 
-      // Filtreye Göre (Tüm / Biga / İnegöl)
-      let filteredRangeTrips = rangeTrips;
-      if (summaryDepotFilter === 1) filteredRangeTrips = rangeTrips.filter(t => t.warehouse_id === 1);
-      if (summaryDepotFilter === 2) filteredRangeTrips = rangeTrips.filter(t => t.warehouse_id === 2);
-
-      // Üst KPI Kartları
+      // KPI Kartları
       document.getElementById('kpi-day-trips').innerText = dayTrips.length;
-      document.getElementById('kpi-range-trips').innerText = filteredRangeTrips.length;
+      document.getElementById('kpi-range-trips').innerText = rangeTrips.length;
       document.getElementById('kpi-biga-range-trips').innerText = rangeTrips.filter(t => t.warehouse_id === 1).length;
       document.getElementById('kpi-inegol-range-trips').innerText = rangeTrips.filter(t => t.warehouse_id === 2).length;
 
-      // Ödenmeyen Seferler (Aralıkta)
-      const unpaidRange = filteredRangeTrips.filter(t => !t.is_paid);
-      const unpaidTotalAmount = unpaidRange.reduce((acc, t) => acc + (Number(t.amount) || 0), 0);
+      const unpaidRange = rangeTrips.filter(t => !t.is_paid);
+      const unpaidTotal = unpaidRange.reduce((acc, t) => acc + (Number(t.amount) || 0), 0);
       document.getElementById('kpi-unpaid-count').innerText = unpaidRange.length;
-      document.getElementById('kpi-unpaid-amount').innerText = '₺ ' + unpaidTotalAmount.toLocaleString('tr-TR');
+      document.getElementById('kpi-unpaid-amount').innerText = '₺ ' + unpaidTotal.toLocaleString('tr-TR');
 
-      // BİGA DEPOSU FİNANS KUTUSU
+      // Finans Kutuları (Biga)
       const bigaDay = dayTrips.filter(t => t.warehouse_id === 1);
       const bigaRange = rangeTrips.filter(t => t.warehouse_id === 1);
-
       const bigaDayPaid = bigaDay.filter(t => t.is_paid).reduce((s, t) => s + Number(t.paid_amount || t.amount || 0), 0);
       const bigaDayUnpaid = bigaDay.filter(t => !t.is_paid).reduce((s, t) => s + Number(t.amount || 0), 0);
       document.getElementById('biga-day-count').innerText = bigaDay.length;
@@ -754,10 +698,9 @@
       document.getElementById('biga-range-unpaid').innerText = '₺ ' + bigaRangeUnpaid.toLocaleString('tr-TR');
       document.getElementById('biga-range-total').innerText = '₺ ' + (bigaRangePaid + bigaRangeUnpaid).toLocaleString('tr-TR');
 
-      // İNEGÖL DEPOSU FİNANS KUTUSU
+      // Finans Kutuları (İnegöl)
       const inegolDay = dayTrips.filter(t => t.warehouse_id === 2);
       const inegolRange = rangeTrips.filter(t => t.warehouse_id === 2);
-
       const inegolDayPaid = inegolDay.filter(t => t.is_paid).reduce((s, t) => s + Number(t.paid_amount || t.amount || 0), 0);
       const inegolDayUnpaid = inegolDay.filter(t => !t.is_paid).reduce((s, t) => s + Number(t.amount || 0), 0);
       document.getElementById('inegol-day-count').innerText = inegolDay.length;
@@ -771,27 +714,116 @@
       document.getElementById('inegol-range-paid').innerText = '₺ ' + inegolRangePaid.toLocaleString('tr-TR');
       document.getElementById('inegol-range-unpaid').innerText = '₺ ' + inegolRangeUnpaid.toLocaleString('tr-TR');
       document.getElementById('inegol-range-total').innerText = '₺ ' + (inegolRangePaid + inegolRangeUnpaid).toLocaleString('tr-TR');
+
+      // GÜZERGAH & BAYİ ANALİTİĞİ (EN ÇOK & EN AZ SEFER)
+      calculateRouteAnalytics(rangeTrips);
     }
 
-    function setSummaryDepotFilter(depotId) {
-      summaryDepotFilter = depotId;
-      ['all', 'biga', 'inegol'].forEach(d => {
-        document.getElementById('btn-sum-depot-' + d).className = 'px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-app-card transition flex items-center space-x-1.5';
+    function calculateRouteAnalytics(trips) {
+      const dealerMap = {};
+      let totalAmount = 0;
+
+      trips.forEach(t => {
+        const dealer = t.dealer_name || 'Belirtilmedi';
+        const amt = Number(t.amount || 0);
+        totalAmount += amt;
+
+        if (!dealerMap[dealer]) {
+          dealerMap[dealer] = { count: 0, amount: 0, warehouse: t.warehouse_id === 1 ? 'Biga' : 'İnegöl' };
+        }
+        dealerMap[dealer].count += 1;
+        dealerMap[dealer].amount += amt;
       });
-      const key = depotId === 1 ? 'biga' : (depotId === 2 ? 'inegol' : 'all');
-      document.getElementById('btn-sum-depot-' + key).className = 'px-3.5 py-1.5 rounded-lg bg-blue-600 text-white flex items-center space-x-1.5 shadow-sm font-bold';
-      applyDateRangeFilter();
+
+      document.getElementById('route-total-amount').innerText = '₺ ' + totalAmount.toLocaleString('tr-TR');
+
+      const dealers = Object.entries(dealerMap).map(([name, data]) => ({ name, ...data }));
+      
+      // En çok sefere göre sırala
+      dealers.sort((a, b) => b.count - a.count);
+
+      const topList = dealers.slice(0, 5); // İlk 5 en fazla
+      const bottomList = [...dealers].reverse().slice(0, 5); // İlk 5 en az
+
+      const topContainer = document.getElementById('top-destinations-list');
+      const bottomContainer = document.getElementById('bottom-destinations-list');
+
+      if (!dealers.length) {
+        topContainer.innerHTML = '<div class="p-3 bg-app-sidebar rounded-xl text-slate-400 text-center">Seçilen aralıkta sefer bulunamadı.</div>';
+        bottomContainer.innerHTML = '<div class="p-3 bg-app-sidebar rounded-xl text-slate-400 text-center">Seçilen aralıkta sefer bulunamadı.</div>';
+        return;
+      }
+
+      topContainer.innerHTML = topList.map((d, index) => `
+        <div class="flex items-center justify-between p-2.5 bg-app-sidebar rounded-xl border border-app-cardBorder">
+          <div class="flex items-center space-x-2.5">
+            <span class="w-5 h-5 rounded-md bg-emerald-950 text-emerald-400 font-extrabold text-[10px] flex items-center justify-center border border-emerald-800">${index + 1}</span>
+            <div>
+              <span class="font-bold text-white block">${d.name}</span>
+              <span class="text-[10px] text-slate-400">${d.warehouse} Çıkışlı</span>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="font-mono font-bold text-emerald-400 block">${d.count} Sefer</span>
+            <span class="text-[10px] font-mono text-slate-400">₺ ${d.amount.toLocaleString('tr-TR')}</span>
+          </div>
+        </div>
+      `).join('');
+
+      bottomContainer.innerHTML = bottomList.map((d, index) => `
+        <div class="flex items-center justify-between p-2.5 bg-app-sidebar rounded-xl border border-app-cardBorder">
+          <div class="flex items-center space-x-2.5">
+            <span class="w-5 h-5 rounded-md bg-rose-950 text-rose-400 font-extrabold text-[10px] flex items-center justify-center border border-rose-800">${index + 1}</span>
+            <div>
+              <span class="font-bold text-white block">${d.name}</span>
+              <span class="text-[10px] text-slate-400">${d.warehouse} Çıkışlı</span>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="font-mono font-bold text-rose-400 block">${d.count} Sefer</span>
+            <span class="text-[10px] font-mono text-slate-400">₺ ${d.amount.toLocaleString('tr-TR')}</span>
+          </div>
+        </div>
+      `).join('');
     }
 
     // ==========================================
-    // TABLO ÇİZİMLERİ (BİGA & İNEGÖL)
+    // DEPO TABLOLARI & TARİH ARALIĞI FİLTRESİ
     // ==========================================
     function renderDepotTables() {
-      const bigaTrips = allTrips.filter(t => t.warehouse_id === 1);
-      const inegolTrips = allTrips.filter(t => t.warehouse_id === 2);
+      filterDepotTable('Biga Depo');
+      filterDepotTable('İnegöl Depo');
+    }
 
-      document.getElementById('biga-table-body').innerHTML = bigaTrips.length ? bigaTrips.map(generateRowHtml).join('') : '<tr><td colspan="6" class="p-6 text-center text-slate-500">Kayıtlı Biga seferi yok.</td></tr>';
-      document.getElementById('inegol-table-body').innerHTML = inegolTrips.length ? inegolTrips.map(generateRowHtml).join('') : '<tr><td colspan="6" class="p-6 text-center text-slate-500">Kayıtlı İnegöl seferi yok.</td></tr>';
+    function filterDepotTable(depotName) {
+      const isBiga = depotName === 'Biga Depo';
+      const startDate = document.getElementById(isBiga ? 'filter-biga-start-date' : 'filter-inegol-start-date').value;
+      const endDate = document.getElementById(isBiga ? 'filter-biga-end-date' : 'filter-inegol-end-date').value;
+      const plate = document.getElementById(isBiga ? 'filter-biga-plate' : 'filter-inegol-plate').value.toLowerCase();
+      const driver = document.getElementById(isBiga ? 'filter-biga-driver' : 'filter-inegol-driver').value.toLowerCase();
+      const dealer = document.getElementById(isBiga ? 'filter-biga-dealer' : 'filter-inegol-dealer').value.toLowerCase();
+
+      const targetId = isBiga ? 1 : 2;
+      const filtered = allTrips.filter(t => {
+        if (t.warehouse_id !== targetId) return false;
+        if (startDate && t.trip_date < startDate) return false;
+        if (endDate && t.trip_date > endDate) return false;
+        if (plate && !t.plate_number.toLowerCase().includes(plate)) return false;
+        if (driver && !t.driver_name.toLowerCase().includes(driver)) return false;
+        if (dealer && !t.dealer_name.toLowerCase().includes(dealer)) return false;
+        return true;
+      });
+
+      const tbody = document.getElementById(isBiga ? 'biga-table-body' : 'inegol-table-body');
+      tbody.innerHTML = filtered.length ? filtered.map(generateRowHtml).join('') : `<tr><td colspan="7" class="p-6 text-center text-slate-500">Kriterlere uygun ${depotName} seferi bulunamadı.</td></tr>`;
+    }
+
+    function clearDepotFilter(depotName) {
+      const isBiga = depotName === 'Biga Depo';
+      document.getElementById(isBiga ? 'filter-biga-plate' : 'filter-inegol-plate').value = '';
+      document.getElementById(isBiga ? 'filter-biga-driver' : 'filter-inegol-driver').value = '';
+      document.getElementById(isBiga ? 'filter-biga-dealer' : 'filter-inegol-dealer').value = '';
+      filterDepotTable(depotName);
     }
 
     function generateRowHtml(trip) {
@@ -801,17 +833,18 @@
       return `
         <tr class="hover:bg-app-cardHover transition">
           <td class="py-3 px-4 font-mono text-slate-300">${trip.trip_date}</td>
+          <td class="py-3 px-4 font-bold text-cyan-300">${trip.dealer_name || 'Genel Sevk'}</td>
           <td class="py-3 px-4 font-mono font-bold text-white tracking-wider">${trip.plate_number}</td>
           <td class="py-3 px-4 font-bold text-slate-200">${trip.driver_name}</td>
           <td class="py-3 px-4 font-mono font-bold text-slate-200">₺ ${amount.toLocaleString('tr-TR')}</td>
           <td class="py-3 px-4">
             ${isPaid 
-              ? `<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">
-                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Ödendi
+              ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">
+                   ● Ödendi
                  </span>
                  ${trip.receipt_url ? `<a href="${trip.receipt_url}" target="_blank" class="ml-2 text-xs font-bold text-cyan-400 hover:underline">Dekont ↗</a>` : ''}`
-              : `<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-950 text-amber-400 border border-amber-800">
-                   <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Bekliyor
+              : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-950 text-amber-400 border border-amber-800">
+                   ● Bekliyor
                  </span>
                  <button onclick="openPaymentModal(${trip.id}, '${trip.plate_number} - ${trip.driver_name}', ${amount})" class="ml-2 text-[11px] font-bold text-blue-400 bg-blue-950/80 px-2 py-0.5 rounded border border-blue-800 hover:bg-blue-900 transition">
                    + Ödeme İşle
@@ -819,7 +852,7 @@
             }
           </td>
           <td class="py-3 px-4 text-right">
-            <button onclick="openEditModal(${trip.id}, '${trip.plate_number}', '${trip.driver_name}')" class="text-xs font-semibold bg-app-sidebar hover:bg-app-cardBorder text-slate-300 px-2.5 py-1 rounded-md transition">
+            <button onclick="openEditModal(${trip.id}, '${trip.plate_number}', '${trip.driver_name}', '${trip.dealer_name || ''}')" class="text-xs font-semibold bg-app-sidebar hover:bg-app-cardBorder text-slate-300 px-2.5 py-1 rounded-md transition">
               Düzenle
             </button>
           </td>
@@ -828,73 +861,7 @@
     }
 
     // ==========================================
-    // ÖDEME VE DEKONT İŞLEME (KESİN ÇÖZÜM - UPSERT)
-    // ==========================================
-    function openPaymentModal(tripId, title, amount) {
-      document.getElementById('pay-trip-id').value = tripId;
-      document.getElementById('pay-title').value = title;
-      document.getElementById('pay-amount').value = amount || '';
-      document.getElementById('payment-modal').classList.remove('hidden');
-      document.getElementById('payment-modal').classList.add('flex');
-    }
-
-    async function submitPayment(e) {
-      e.preventDefault();
-      const tripId = Number(document.getElementById('pay-trip-id').value);
-      const amount = Number(document.getElementById('pay-amount').value);
-      const file = document.getElementById('pay-file').files[0];
-      const btn = document.getElementById('btn-save-pay');
-      btn.innerText = 'İşleniyor...';
-
-      try {
-        let receiptUrl = null;
-
-        // Dosya varsa Supabase Storage'a yükle
-        if (file) {
-          const fileExt = file.name.split('.').pop();
-          const fileName = `${tripId}_${Date.now()}.${fileExt}`;
-          const { error: uploadErr } = await db.storage.from('dekontlar').upload(fileName, file);
-          if (uploadErr) console.warn('Dosya yükleme uyarısı:', uploadErr);
-
-          const { data: publicUrlData } = db.storage.from('dekontlar').getPublicUrl(fileName);
-          receiptUrl = publicUrlData.publicUrl;
-        }
-
-        // 1. Payments tablosuna UPSERT (yoksa ekler, varsa günceller!)
-        const { error: payErr } = await db.from('payments').upsert({
-          trip_id: tripId,
-          is_paid: true,
-          paid_amount: amount,
-          paid_at: new Date().toISOString(),
-          receipt_url: receiptUrl
-        }, { onConflict: 'trip_id' });
-
-        if (payErr) throw payErr;
-
-        // 2. Arayüzü anında 'Ödendi' yap (Optimistic Update)
-        const tripIndex = allTrips.findIndex(t => t.id === tripId);
-        if (tripIndex !== -1) {
-          allTrips[tripIndex].is_paid = true;
-          allTrips[tripIndex].paid_amount = amount;
-          allTrips[tripIndex].receipt_url = receiptUrl;
-        }
-
-        closeModal('payment-modal');
-        alert('Ödeme başarıyla işlendi ve ÖDENDİ durumuna getirildi!');
-        
-        applyDateRangeFilter();
-        renderDepotTables();
-        renderPaymentsTable(allTrips);
-        fetchAndRenderAll(); // Arka planda tam yenile
-      } catch (err) {
-        alert('Ödeme işlenirken hata: ' + err.message);
-      } finally {
-        btn.innerText = "✓ Ödemeyi Onayla ve 'Ödendi' Yap";
-      }
-    }
-
-    // ==========================================
-    // EXCEL YÜKLEME MOTORU
+    // EXCEL OKUMA (BAYİ ADI DAHİL)
     // ==========================================
     async function handleExcelUpload(event, depotName) {
       if (!db) return alert('Veritabanına bağlanılamadı!');
@@ -920,6 +887,7 @@
             const plateKey = keys.find(k => /plaka|plate|araç/i.test(k));
             const driverKey = keys.find(k => /şoför|sofor|sürücü|ad soyad|driver/i.test(k));
             const amountKey = keys.find(k => /tutar|ücret|fiyat|amount/i.test(k));
+            const dealerKey = keys.find(k => /bayi|destinasyon|varış|varis|nokta|hedef|gideceği|yer|alici|müşteri|musteri/i.test(k));
 
             if (plateKey && row[plateKey]) {
               insertedTrips.push({
@@ -927,6 +895,7 @@
                 warehouse_id: warehouseId,
                 plate_number: String(row[plateKey]).trim().toUpperCase(),
                 driver_name: driverKey && row[driverKey] ? String(row[driverKey]).trim() : 'Bilinmeyen Şoför',
+                dealer_name: dealerKey && row[dealerKey] ? String(row[dealerKey]).trim() : 'Genel Sevk',
                 amount: amountKey && !isNaN(row[amountKey]) ? Number(row[amountKey]) : 0
               });
             }
@@ -937,7 +906,6 @@
           const { data: savedData, error } = await db.from('trips').insert(insertedTrips).select();
           if (error) throw error;
 
-          // Her sefer için varsayılan 'Ödenmedi' kaydı aç
           const paymentsToInsert = savedData.map(t => ({ trip_id: t.id, is_paid: false, paid_amount: t.amount }));
           await db.from('payments').upsert(paymentsToInsert, { onConflict: 'trip_id' });
 
@@ -951,9 +919,25 @@
     }
 
     // ==========================================
-    // ŞOFÖRLER VE ÖDEMELER SAYFALARI
+    // ŞOFÖRLER ARAMA & FİLTRELEME
     // ==========================================
     function renderDrivers() {
+      filterDriversLive();
+    }
+
+    function setDriverDepotFilter(depot) {
+      activeDriverDepot = depot;
+      ['all', 'biga', 'inegol'].forEach(d => {
+        const btn = document.getElementById('btn-drv-' + d);
+        if (btn) btn.className = 'px-3 py-2 rounded-xl bg-app-sidebar border border-app-cardBorder text-slate-300';
+      });
+      const key = depot === 'Biga Depo' ? 'biga' : (depot === 'İnegöl Depo' ? 'inegol' : 'all');
+      document.getElementById('btn-drv-' + key).className = 'px-3 py-2 rounded-xl bg-blue-600 text-white font-bold';
+      filterDriversLive();
+    }
+
+    function filterDriversLive() {
+      const search = (document.getElementById('driver-search-input')?.value || '').toLowerCase().trim();
       const container = document.getElementById('drivers-container');
       const driverMap = {};
 
@@ -969,14 +953,28 @@
         driverMap[t.driver_name].count += 1;
       });
 
-      const drivers = Object.values(driverMap);
+      let drivers = Object.values(driverMap);
+
+      // Depo filtresi
+      if (activeDriverDepot !== 'all') {
+        drivers = drivers.filter(d => d.warehouse === activeDriverDepot);
+      }
+
+      // Ad ve Plaka Canlı Arama
+      if (search) {
+        drivers = drivers.filter(d => 
+          d.name.toLowerCase().includes(search) || 
+          d.plate.toLowerCase().includes(search)
+        );
+      }
+
       if (!drivers.length) {
-        container.innerHTML = '<div class="col-span-3 text-center text-slate-500 p-8">Henüz kayıtlı şoför yok.</div>';
+        container.innerHTML = '<div class="col-span-3 text-center text-slate-500 p-8">Arama kriterlerine uygun şoför veya plaka bulunamadı.</div>';
         return;
       }
 
       container.innerHTML = drivers.map(d => `
-        <div class="driver-card bg-app-card rounded-2xl p-4 border border-app-cardBorder" data-warehouse="${d.warehouse}">
+        <div class="driver-card bg-app-card rounded-2xl p-4 border border-app-cardBorder hover:border-slate-500 transition">
           <div class="flex justify-between items-start">
             <div>
               <span class="text-[10px] font-bold ${d.warehouse === 'Biga Depo' ? 'text-sky-400 bg-sky-950/80' : 'text-indigo-400 bg-indigo-950/80'} border border-app-cardBorder px-2 py-0.5 rounded">${d.warehouse}</span>
@@ -991,12 +989,16 @@
       `).join('');
     }
 
+    // ==========================================
+    // ÖDEMELER TABLOSU & MODALLAR
+    // ==========================================
     function renderPaymentsTable(trips) {
       const tbody = document.getElementById('payments-table-body');
       tbody.innerHTML = trips.map(t => `
         <tr class="hover:bg-app-cardHover transition">
           <td class="py-3 px-4 font-mono text-slate-300">${t.trip_date}</td>
           <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${t.warehouse_id === 1 ? 'bg-sky-950 text-sky-400' : 'bg-indigo-950 text-indigo-400'}">${t.warehouse_id === 1 ? 'Biga' : 'İnegöl'}</span></td>
+          <td class="py-3 px-4 font-bold text-cyan-300">${t.dealer_name || 'Genel Sevk'}</td>
           <td class="py-3 px-4 font-mono font-bold text-white">${t.plate_number}</td>
           <td class="py-3 px-4 font-bold text-slate-200">${t.driver_name}</td>
           <td class="py-3 px-4 font-mono font-bold text-white">₺ ${(Number(t.paid_amount || t.amount || 0)).toLocaleString('tr-TR')}</td>
@@ -1023,11 +1025,66 @@
       if (type === 'paid') renderPaymentsTable(allTrips.filter(t => t.is_paid));
     }
 
-    // Modal & Yardımcılar
-    function openEditModal(tripId, plate, driver) {
+    function openPaymentModal(tripId, title, amount) {
+      document.getElementById('pay-trip-id').value = tripId;
+      document.getElementById('pay-title').value = title;
+      document.getElementById('pay-amount').value = amount || '';
+      document.getElementById('payment-modal').classList.remove('hidden');
+      document.getElementById('payment-modal').classList.add('flex');
+    }
+
+    async function submitPayment(e) {
+      e.preventDefault();
+      const tripId = Number(document.getElementById('pay-trip-id').value);
+      const amount = Number(document.getElementById('pay-amount').value);
+      const file = document.getElementById('pay-file').files[0];
+      const btn = document.getElementById('btn-save-pay');
+      btn.innerText = 'İşleniyor...';
+
+      try {
+        let receiptUrl = null;
+        if (file) {
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${tripId}_${Date.now()}.${fileExt}`;
+          await db.storage.from('dekontlar').upload(fileName, file);
+          const { data: publicUrlData } = db.storage.from('dekontlar').getPublicUrl(fileName);
+          receiptUrl = publicUrlData.publicUrl;
+        }
+
+        const { error: payErr } = await db.from('payments').upsert({
+          trip_id: tripId,
+          is_paid: true,
+          paid_amount: amount,
+          paid_at: new Date().toISOString(),
+          receipt_url: receiptUrl
+        }, { onConflict: 'trip_id' });
+
+        if (payErr) throw payErr;
+
+        const tripIndex = allTrips.findIndex(t => t.id === tripId);
+        if (tripIndex !== -1) {
+          allTrips[tripIndex].is_paid = true;
+          allTrips[tripIndex].paid_amount = amount;
+          allTrips[tripIndex].receipt_url = receiptUrl;
+        }
+
+        closeModal('payment-modal');
+        alert('Ödeme başarıyla kaydedildi!');
+        applyDateRangeFilter();
+        renderDepotTables();
+        renderPaymentsTable(allTrips);
+      } catch (err) {
+        alert('Ödeme hatası: ' + err.message);
+      } finally {
+        btn.innerText = "✓ Ödemeyi Onayla ve 'Ödendi' Yap";
+      }
+    }
+
+    function openEditModal(tripId, plate, driver, dealer) {
       document.getElementById('edit-trip-id').value = tripId;
       document.getElementById('edit-plate-val').value = plate;
       document.getElementById('edit-driver-val').value = driver;
+      document.getElementById('edit-dealer-val').value = dealer;
       document.getElementById('edit-modal').classList.remove('hidden');
       document.getElementById('edit-modal').classList.add('flex');
     }
@@ -1037,12 +1094,18 @@
       const tripId = document.getElementById('edit-trip-id').value;
       const plate = document.getElementById('edit-plate-val').value.trim().toUpperCase();
       const driver = document.getElementById('edit-driver-val').value.trim();
+      const dealer = document.getElementById('edit-dealer-val').value.trim();
 
-      const { error } = await db.from('trips').update({ plate_number: plate, driver_name: driver }).eq('id', tripId);
+      const { error } = await db.from('trips').update({
+        plate_number: plate,
+        driver_name: driver,
+        dealer_name: dealer
+      }).eq('id', tripId);
+
       if (error) return alert('Güncelleme hatası: ' + error.message);
 
       closeModal('edit-modal');
-      alert('Plaka ve şoför bilgisi güncellendi!');
+      alert('Sefer bilgileri başarıyla güncellendi!');
       fetchAndRenderAll();
     }
 
@@ -1053,10 +1116,11 @@
 
     function exportToCSV() {
       if (!allTrips.length) return alert('Dışa aktarılacak sefer verisi yok!');
-      const headers = ['Sefer Tarihi', 'Depo', 'Plaka', 'Şoför', 'Tutar', 'Ödeme Durumu'];
+      const headers = ['Sefer Tarihi', 'Depo', 'Güzergâh / Bayi', 'Plaka', 'Şoför', 'Tutar', 'Ödeme Durumu'];
       const rows = allTrips.map(t => [
         t.trip_date,
         t.warehouse_id === 1 ? 'Biga Depo' : 'İnegöl Depo',
+        `"${t.dealer_name || 'Genel Sevk'}"`,
         t.plate_number,
         `"${t.driver_name}"`,
         t.paid_amount || t.amount || 0,
@@ -1075,4 +1139,3 @@
   </script>
 </body>
 </html>
-
