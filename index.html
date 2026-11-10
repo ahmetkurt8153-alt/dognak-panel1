@@ -232,7 +232,6 @@
 
         <!-- DEPO BAZINDA FİNANS ÖZETİ -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <!-- BİGA DEPOSU -->
           <div class="bg-app-card border border-app-cardBorder rounded-2xl p-5 space-y-4">
             <div class="flex items-center space-x-2">
               <span class="w-2.5 h-2.5 rounded-full bg-sky-400"></span>
@@ -256,7 +255,6 @@
             </div>
           </div>
 
-          <!-- İNEGÖL DEPOSU -->
           <div class="bg-app-card border border-app-cardBorder rounded-2xl p-5 space-y-4">
             <div class="flex items-center space-x-2">
               <span class="w-2.5 h-2.5 rounded-full bg-indigo-400"></span>
@@ -317,7 +315,7 @@
             <p class="text-xs text-sky-200">Günlük Biga Excel dosyasını buraya yükleyin; veriler kümüle kaydedilir.</p>
           </div>
           <div class="flex items-center space-x-2 shrink-0">
-            <button onclick="clearDepotAllTrips(1, 'Biga Depo')" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 px-3.5 py-2.5 rounded-xl font-bold text-xs transition" title="Tüm Biga seferlerini siler">
+            <button onclick="clearDepotAllTrips(1, 'Biga Depo')" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 px-3.5 py-2.5 rounded-xl font-bold text-xs transition">
               🗑 Biga Seferlerini Temizle
             </button>
             <label class="cursor-pointer bg-white text-blue-900 hover:bg-sky-50 px-5 py-2.5 rounded-xl font-bold text-xs shadow-lg transition flex items-center space-x-2">
@@ -365,7 +363,7 @@
             <p class="text-xs text-indigo-200">Günlük İnegöl Excel dosyasını buraya yükleyin; veriler kümüle kaydedilir.</p>
           </div>
           <div class="flex items-center space-x-2 shrink-0">
-            <button onclick="clearDepotAllTrips(2, 'İnegöl Depo')" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 px-3.5 py-2.5 rounded-xl font-bold text-xs transition" title="Hatalı TIR kayıtlarını temizlemek için tüm İnegöl seferlerini siler">
+            <button onclick="clearDepotAllTrips(2, 'İnegöl Depo')" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 px-3.5 py-2.5 rounded-xl font-bold text-xs transition">
               🗑 İnegöl Seferlerini Temizle
             </button>
             <label class="cursor-pointer bg-white text-indigo-900 hover:bg-indigo-50 px-5 py-2.5 rounded-xl font-bold text-xs shadow-lg transition flex items-center space-x-2">
@@ -403,44 +401,96 @@
       </div>
 
       <!-- ========================================== -->
-      <!-- SAYFA 4: ŞOFÖRLER -->
+      <!-- SAYFA 4: ŞOFÖRLER (MANUEL EKLEME & TELEFON DÜZENLEME) -->
       <!-- ========================================== -->
       <div id="page-drivers" class="hidden space-y-5">
         <div class="bg-app-card p-5 rounded-2xl border border-app-cardBorder flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h2 class="text-lg font-extrabold text-white">Kayıtlı Şoför Havuzu</h2>
-            <p class="text-xs text-slate-400">Şoför ve araç plakası arama</p>
+            <p class="text-xs text-slate-400">Şoför rehberi, telefon numaraları ve araç plakaları</p>
           </div>
+          
           <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-            <div class="relative flex-1 md:w-64">
+            <!-- Canlı Arama -->
+            <div class="relative flex-1 md:w-56">
               <input type="text" id="driver-search-input" onkeyup="filterDriversLive()" placeholder="Şoför adı veya plaka ara..." class="w-full bg-app-sidebar border border-app-cardBorder rounded-xl pl-8 pr-3 py-2 text-xs text-white focus:outline-blue-500">
               <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </div>
-            <div class="flex gap-1.5 text-xs font-bold">
+
+            <!-- Depo Filtreleri -->
+            <div class="flex gap-1 text-xs font-bold">
               <button onclick="setDriverDepotFilter('all')" id="btn-drv-all" class="px-3 py-2 rounded-xl bg-blue-600 text-white">Tümü</button>
               <button onclick="setDriverDepotFilter('Biga Depo')" id="btn-drv-biga" class="px-3 py-2 rounded-xl bg-app-sidebar border border-app-cardBorder text-slate-300">Biga</button>
               <button onclick="setDriverDepotFilter('İnegöl Depo')" id="btn-drv-inegol" class="px-3 py-2 rounded-xl bg-app-sidebar border border-app-cardBorder text-slate-300">İnegöl</button>
             </div>
+
+            <!-- Yeni Şoför Ekle Butonu -->
+            <button onclick="openDriverModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-lg shadow-emerald-600/20">
+              <span>+ Yeni Şoför Ekle</span>
+            </button>
           </div>
         </div>
+
         <div id="drivers-container" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
       </div>
 
       <!-- ========================================== -->
-      <!-- SAYFA 5: ÖDEMELER -->
+      <!-- SAYFA 5: ÖDEMELER (GELİŞMİŞ FİLTRELİ) -->
       <!-- ========================================== -->
       <div id="page-payments" class="hidden space-y-5">
+        
+        <!-- Üst Başlık & Durum Butonları -->
         <div class="bg-app-card p-5 rounded-2xl border border-app-cardBorder flex flex-wrap justify-between items-center gap-4">
           <div>
             <h2 class="text-lg font-extrabold text-white">Tüm Sefer Ödemeleri</h2>
-            <p class="text-xs text-slate-400">Şoför hakedişleri ve dekont arşivi</p>
+            <p class="text-xs text-slate-400">Şoför hakedişleri, dekont arşivi ve filtreleme</p>
           </div>
           <div class="flex items-center space-x-2 text-xs">
-            <button onclick="filterPaymentList('all')" id="pay-btn-all" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg font-bold">Tümü</button>
-            <button onclick="filterPaymentList('unpaid')" id="pay-btn-unpaid" class="bg-app-sidebar text-amber-400 border border-amber-800/80 px-3 py-1.5 rounded-lg font-bold">Bekleyenler</button>
-            <button onclick="filterPaymentList('paid')" id="pay-btn-paid" class="bg-app-sidebar text-emerald-400 border border-emerald-800/80 px-3 py-1.5 rounded-lg font-bold">Ödenenler</button>
+            <button onclick="setPaymentStatusFilter('all')" id="pay-btn-all" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg font-bold">Tümü</button>
+            <button onclick="setPaymentStatusFilter('unpaid')" id="pay-btn-unpaid" class="bg-app-sidebar text-amber-400 border border-amber-800/80 px-3 py-1.5 rounded-lg font-bold">Bekleyenler</button>
+            <button onclick="setPaymentStatusFilter('paid')" id="pay-btn-paid" class="bg-app-sidebar text-emerald-400 border border-emerald-800/80 px-3 py-1.5 rounded-lg font-bold">Ödenenler</button>
           </div>
         </div>
+
+        <!-- YENİ GELİŞMİŞ FİLTRE ÇUBUĞU (TARİH, DEPO, PLAKA, ŞOFÖR, BAYİ) -->
+        <div class="bg-app-card rounded-xl p-4 border border-app-cardBorder flex flex-wrap items-center gap-3 text-xs">
+          <!-- Tarih Aralığı -->
+          <div class="flex items-center space-x-1.5">
+            <span class="text-slate-400 text-[11px]">Başlangıç:</span>
+            <input type="date" id="filter-pay-start-date" onchange="filterPaymentsTable()" class="bg-app-sidebar border border-app-cardBorder rounded-lg px-2.5 py-1.5 text-xs text-white">
+          </div>
+          <div class="flex items-center space-x-1.5">
+            <span class="text-slate-400 text-[11px]">Bitiş:</span>
+            <input type="date" id="filter-pay-end-date" onchange="filterPaymentsTable()" class="bg-app-sidebar border border-app-cardBorder rounded-lg px-2.5 py-1.5 text-xs text-white">
+          </div>
+
+          <!-- Depo Dropdown -->
+          <select id="filter-pay-depot" onchange="filterPaymentsTable()" class="bg-app-sidebar border border-app-cardBorder rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-blue-500">
+            <option value="all">Tüm Depolar</option>
+            <option value="1">Biga Depo</option>
+            <option value="2">İnegöl Depo</option>
+          </select>
+
+          <!-- Plaka Arama -->
+          <input type="text" id="filter-pay-plate" onkeyup="filterPaymentsTable()" placeholder="Plaka Ara..." class="bg-app-sidebar border border-app-cardBorder rounded-lg px-3 py-1.5 text-xs text-white w-28">
+
+          <!-- Şoför Arama -->
+          <input type="text" id="filter-pay-driver" onkeyup="filterPaymentsTable()" placeholder="Şoför Ara..." class="bg-app-sidebar border border-app-cardBorder rounded-lg px-3 py-1.5 text-xs text-white w-28">
+
+          <!-- Güzergâh / Bayi Arama -->
+          <input type="text" id="filter-pay-dealer" onkeyup="filterPaymentsTable()" placeholder="Bayi / Güzergâh..." class="bg-app-sidebar border border-app-cardBorder rounded-lg px-3 py-1.5 text-xs text-white w-32">
+
+          <!-- Filtreyi Temizle -->
+          <button onclick="clearPaymentFilters()" class="text-xs text-amber-400 font-bold hover:underline ml-auto">Filtreyi Temizle</button>
+        </div>
+
+        <!-- Özet Canlı Bilgi Şeridi -->
+        <div class="flex justify-between items-center text-xs px-2 text-slate-400">
+          <div>Gösterilen Sefer: <strong id="pay-filtered-count" class="text-white font-mono">0</strong></div>
+          <div>Filtrelenen Toplam Tutar: <strong id="pay-filtered-amount" class="text-emerald-400 font-mono">₺ 0</strong></div>
+        </div>
+
+        <!-- Ödemeler Tablosu -->
         <div class="bg-app-card rounded-2xl border border-app-cardBorder overflow-x-auto">
           <table class="w-full text-left text-xs">
             <thead class="bg-app-sidebar border-b border-app-cardBorder text-[11px] font-bold text-slate-400 uppercase">
@@ -491,7 +541,7 @@
     </div>
   </div>
 
-  <!-- MODAL: DÜZENLEME (PLAKA, ŞOFÖR, BAYİ VE TUTAR) -->
+  <!-- MODAL: SEFER DÜZENLEME -->
   <div id="edit-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
     <div class="bg-app-card border border-app-cardBorder rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
       <div class="flex justify-between items-center border-b border-app-cardBorder pb-3">
@@ -523,6 +573,41 @@
     </div>
   </div>
 
+  <!-- YENİ MODAL: ŞOFÖR EKLE / DÜZENLE (TELEFON NUMARASI DAHİL) -->
+  <div id="driver-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-app-card border border-app-cardBorder rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b border-app-cardBorder pb-3">
+        <h3 id="driver-modal-title" class="font-extrabold text-white text-sm">Yeni Şoför Ekle</h3>
+        <button onclick="closeModal('driver-modal')" class="text-slate-400 hover:text-white text-xl font-bold">&times;</button>
+      </div>
+      <form onsubmit="submitDriver(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="driver-modal-id">
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Şoför Adı Soyadı</label>
+          <input type="text" id="driver-name-val" required placeholder="Örn: AHMET YILMAZ" class="w-full bg-app-sidebar border border-app-cardBorder rounded-lg p-2 font-bold text-white uppercase focus:outline-blue-500">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Sabit Plaka (Varsa)</label>
+          <input type="text" id="driver-plate-val" placeholder="Örn: 16 AB 123" class="w-full bg-app-sidebar border border-app-cardBorder rounded-lg p-2 font-mono font-bold text-white uppercase focus:outline-blue-500">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Telefon Numarası</label>
+          <input type="tel" id="driver-phone-val" placeholder="Örn: 0532 123 45 67" class="w-full bg-app-sidebar border border-app-cardBorder rounded-lg p-2 font-bold text-white focus:outline-blue-500">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Bağlı Olduğu Depo</label>
+          <select id="driver-depot-val" class="w-full bg-app-sidebar border border-app-cardBorder rounded-lg p-2 font-bold text-white focus:outline-blue-500">
+            <option value="1">Biga Depo (17-BGA)</option>
+            <option value="2">İnegöl Depo (16-ING)</option>
+          </select>
+        </div>
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2.5 rounded-xl transition shadow-lg shadow-emerald-600/20">
+          Şoför Bilgisini Kaydet
+        </button>
+      </form>
+    </div>
+  </div>
+
   <!-- JAVASCRIPT MOTORU -->
   <script>
     const SUPABASE_URL = 'https://bmliyzujfblvztnhvbwi.supabase.co';
@@ -530,7 +615,9 @@
 
     let db = null;
     let allTrips = [];
+    let dbDrivers = [];
     let activeDriverDepot = 'all';
+    let currentPaymentStatusFilter = 'all';
 
     function toggleSidebar() {
       document.getElementById('main-sidebar').classList.toggle('sidebar-collapsed');
@@ -551,6 +638,9 @@
         document.getElementById('filter-biga-end-date').value = today;
         document.getElementById('filter-inegol-start-date').value = firstDayOfMonth;
         document.getElementById('filter-inegol-end-date').value = today;
+
+        document.getElementById('filter-pay-start-date').value = firstDayOfMonth;
+        document.getElementById('filter-pay-end-date').value = today;
 
         document.getElementById('live-clock').innerText = new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -585,6 +675,7 @@
     async function fetchAndRenderAll() {
       if (!db) return;
       try {
+        // Seferleri çek
         const { data, error } = await db
           .from('trips')
           .select('*, warehouses(name), payments(*)')
@@ -603,18 +694,29 @@
           };
         });
 
+        // Şoförler tablosunu çek
+        try {
+          const { data: drvData } = await db.from('drivers').select('*');
+          dbDrivers = drvData || [];
+        } catch (e) {
+          console.warn('Drivers tablosu henüz yoksa fallback kullanılır:', e);
+        }
+
         document.getElementById('badge-biga-count').innerText = allTrips.filter(t => t.warehouse_id === 1).length;
         document.getElementById('badge-inegol-count').innerText = allTrips.filter(t => t.warehouse_id === 2).length;
 
         applyDateRangeFilter();
         renderDepotTables();
         renderDrivers();
-        renderPaymentsTable(allTrips);
+        filterPaymentsTable();
       } catch (err) {
         console.error('Veri çekme hatası:', err);
       }
     }
 
+    // ==========================================
+    // YÖNETİCİ ÖZETİ & GÜZERGAH
+    // ==========================================
     function applyDateRangeFilter() {
       const startDate = document.getElementById('summary-start-date').value;
       const endDate = document.getElementById('summary-end-date').value;
@@ -808,7 +910,7 @@
     }
 
     // ==========================================
-    // EXCEL OKUMA MOTORU (PLAKA HATASI KESİN ÇÖZÜLDÜ)
+    // EXCEL YÜKLEME
     // ==========================================
     async function handleExcelUpload(event, depotName) {
       if (!db) return alert('Veritabanına bağlanılamadı!');
@@ -830,24 +932,18 @@
 
           for (const row of rows) {
             const keys = Object.keys(row);
-            
-            // 1. Tarih Algılama
             const dateKey = keys.find(k => /sefer.*tarih|tarih|date/i.test(k));
 
-            // 2. KUSURSUZ PLAKA ALGILAMA ("Araç Tipi" ve "TIR"ı kesinlikle eler)
+            // Plaka yakalama
             let plateKey = keys.find(k => /çekici.*plaka|plaka.*no|plaka/i.test(k) && !/tip|cins|tür|model/i.test(k));
-            
-            // Eğer doğrudan plaka kelimesi yoksa, araç kelimesi geçen ama tip/cins OLMAYAN kolona bak
             if (!plateKey) {
               plateKey = keys.find(k => /araç|arac/i.test(k) && !/tip|cins|tür|tur|model|kasa/i.test(k));
             }
 
-            // Değer TIR veya Kamyon gibi bir araç tipi ise, satır içindeki diğer kolonlarda gerçek plakayı ara
             let rawPlate = plateKey && row[plateKey] ? String(row[plateKey]).trim().toUpperCase() : '';
             if (!rawPlate || ['TIR', 'KAMYON', 'KIRKAYAK', 'KAMYONET'].includes(rawPlate)) {
               for (const k of keys) {
                 const val = String(row[k] || '').trim().toUpperCase();
-                // Türk plaka formatı örneği: 16 AB 123, 17ZC882 vb.
                 if (/\b(0[1-9]|[1-7][0-9]|8[01])\s*[A-Z]{1,3}\s*\d{2,4}\b/.test(val)) {
                   rawPlate = val;
                   break;
@@ -855,13 +951,8 @@
               }
             }
 
-            // 3. Şoför Algılama
             const driverKey = keys.find(k => /şoför|sofor|sürücü|surucu|ad.*soyad|driver/i.test(k));
-            
-            // 4. Tutar Algılama
             const amountKey = keys.find(k => /tutar|ücret|ucret|fiyat|navlun|hakediş|amount/i.test(k));
-            
-            // 5. Bayi / Güzergâh Algılama
             const dealerKey = keys.find(k => /bayi|destinasyon|varış|varis|güzergah|guzergah|nokta|hedef|gideceği|yer|alici|müşteri|musteri/i.test(k));
 
             if (rawPlate) {
@@ -893,9 +984,6 @@
       reader.readAsArrayBuffer(file);
     }
 
-    // ==========================================
-    // SATIR SİLME & DEPO TEMİZLEME İŞLEMLERİ
-    // ==========================================
     async function deleteSingleTrip(tripId) {
       if (!confirm('Bu sefer kaydını kalıcı olarak silmek istediğinize emin misiniz?')) return;
       try {
@@ -905,7 +993,7 @@
         allTrips = allTrips.filter(t => t.id !== tripId);
         applyDateRangeFilter();
         renderDepotTables();
-        renderPaymentsTable(allTrips);
+        filterPaymentsTable();
         renderDrivers();
         alert('Sefer kaydı silindi.');
       } catch (err) {
@@ -921,7 +1009,7 @@
         const { error } = await db.from('trips').delete().eq('warehouse_id', warehouseId);
         if (error) throw error;
 
-        alert(`${depotName} içindeki tüm seferler başarıyla temizlendi! Şimdi Excel'i doğru şekilde tekrar yükleyebilirsiniz.`);
+        alert(`${depotName} içindeki tüm seferler temizlendi.`);
         fetchAndRenderAll();
       } catch (err) {
         alert('Toplu silme hatası: ' + err.message);
@@ -929,7 +1017,7 @@
     }
 
     // ==========================================
-    // ŞOFÖRLER ARAMA & FİLTRELEME
+    // ŞOFÖRLER HAVUZU (TELEFON & MANUEL EKLEME)
     // ==========================================
     function renderDrivers() {
       filterDriversLive();
@@ -951,16 +1039,36 @@
       const container = document.getElementById('drivers-container');
       const driverMap = {};
 
+      // 1. Önce veritabanındaki kayıtlı şoförleri haritaya ekle
+      dbDrivers.forEach(d => {
+        driverMap[d.full_name] = {
+          id: d.id,
+          name: d.full_name,
+          plate: d.plate_number || 'Belirtilmedi',
+          phone: d.phone || '',
+          warehouse_id: d.warehouse_id || 1,
+          warehouse: d.warehouse_id === 2 ? 'İnegöl Depo' : 'Biga Depo',
+          count: 0
+        };
+      });
+
+      // 2. Seferlerden gelen şoförleri birleştir
       allTrips.forEach(t => {
         if (!driverMap[t.driver_name]) {
           driverMap[t.driver_name] = {
+            id: null,
             name: t.driver_name,
             plate: t.plate_number,
+            phone: '',
+            warehouse_id: t.warehouse_id,
             warehouse: t.warehouse_id === 1 ? 'Biga Depo' : 'İnegöl Depo',
             count: 0
           };
         }
         driverMap[t.driver_name].count += 1;
+        if (!driverMap[t.driver_name].plate || driverMap[t.driver_name].plate === 'Belirtilmedi') {
+          driverMap[t.driver_name].plate = t.plate_number;
+        }
       });
 
       let drivers = Object.values(driverMap);
@@ -972,12 +1080,13 @@
       if (search) {
         drivers = drivers.filter(d => 
           d.name.toLowerCase().includes(search) || 
-          d.plate.toLowerCase().includes(search)
+          d.plate.toLowerCase().includes(search) ||
+          d.phone.includes(search)
         );
       }
 
       if (!drivers.length) {
-        container.innerHTML = '<div class="col-span-3 text-center text-slate-500 p-8">Arama kriterlerine uygun şoför veya plaka bulunamadı.</div>';
+        container.innerHTML = '<div class="col-span-3 text-center text-slate-500 p-8">Kayıtlı şoför bulunamadı.</div>';
         return;
       }
 
@@ -986,23 +1095,106 @@
           <div class="flex justify-between items-start">
             <div>
               <span class="text-[10px] font-bold ${d.warehouse === 'Biga Depo' ? 'text-sky-400 bg-sky-950/80' : 'text-indigo-400 bg-indigo-950/80'} border border-app-cardBorder px-2 py-0.5 rounded">${d.warehouse}</span>
-              <h4 class="font-bold text-white mt-2">${d.name}</h4>
+              <h4 class="font-bold text-white text-sm mt-2">${d.name}</h4>
+              <div class="mt-1 text-xs">
+                ${d.phone 
+                  ? `<a href="tel:${d.phone}" class="text-cyan-400 font-mono font-bold hover:underline flex items-center gap-1">📞 ${d.phone}</a>` 
+                  : `<span class="text-slate-500 italic text-[11px]">Telefon eklenmedi</span>`}
+              </div>
             </div>
             <span class="text-xs font-bold font-mono bg-app-sidebar px-2 py-1 rounded border border-app-cardBorder text-slate-200">${d.plate}</span>
           </div>
-          <div class="mt-3 pt-2 border-t border-app-cardBorder text-xs text-slate-400 font-semibold flex justify-between">
-            <span>Toplam Sefer: <strong class="text-white">${d.count}</strong></span>
+          <div class="mt-4 pt-2 border-t border-app-cardBorder flex justify-between items-center text-xs">
+            <span class="text-slate-400">Toplam Sefer: <strong class="text-white">${d.count}</strong></span>
+            <button onclick="openDriverModal('${d.name}', '${d.plate === 'Belirtilmedi' ? '' : d.plate}', '${d.phone}', ${d.warehouse_id})" class="text-xs font-bold text-blue-400 bg-blue-950/80 hover:bg-blue-900 border border-blue-800 px-2.5 py-1 rounded-md transition">
+              Düzenle
+            </button>
           </div>
         </div>
       `).join('');
     }
 
+    function openDriverModal(name = '', plate = '', phone = '', warehouseId = 1) {
+      document.getElementById('driver-modal-title').innerText = name ? 'Şoför Bilgisi Düzenle' : 'Yeni Şoför Ekle';
+      document.getElementById('driver-name-val').value = name;
+      document.getElementById('driver-name-val').readOnly = !!name; // İsim birincil anahtar
+      document.getElementById('driver-plate-val').value = plate;
+      document.getElementById('driver-phone-val').value = phone;
+      document.getElementById('driver-depot-val').value = warehouseId;
+      document.getElementById('driver-modal').classList.remove('hidden');
+      document.getElementById('driver-modal').classList.add('flex');
+    }
+
+    async function submitDriver(e) {
+      e.preventDefault();
+      const name = document.getElementById('driver-name-val').value.trim().toUpperCase();
+      const plate = document.getElementById('driver-plate-val').value.trim().toUpperCase();
+      const phone = document.getElementById('driver-phone-val').value.trim();
+      const warehouseId = Number(document.getElementById('driver-depot-val').value);
+
+      try {
+        const { error } = await db.from('drivers').upsert({
+          full_name: name,
+          plate_number: plate,
+          phone: phone,
+          warehouse_id: warehouseId
+        }, { onConflict: 'full_name' });
+
+        if (error) throw error;
+
+        closeModal('driver-modal');
+        alert('Şoför bilgisi başarıyla kaydedildi!');
+        fetchAndRenderAll();
+      } catch (err) {
+        alert('Şoför kaydetme hatası: ' + err.message);
+      }
+    }
+
     // ==========================================
-    // ÖDEMELER VE DÜZENLEME MODALI
+    // ÖDEMELER TABLOSU & GELİŞMİŞ FİLTRELEME
     // ==========================================
-    function renderPaymentsTable(trips) {
+    function setPaymentStatusFilter(status) {
+      currentPaymentStatusFilter = status;
+      ['all', 'unpaid', 'paid'].forEach(t => document.getElementById('pay-btn-' + t).className = 'bg-app-sidebar text-slate-300 border border-app-cardBorder px-3 py-1.5 rounded-lg font-bold');
+      document.getElementById('pay-btn-' + status).className = 'bg-blue-600 text-white px-3 py-1.5 rounded-lg font-bold';
+      filterPaymentsTable();
+    }
+
+    function filterPaymentsTable() {
+      const startDate = document.getElementById('filter-pay-start-date').value;
+      const endDate = document.getElementById('filter-pay-end-date').value;
+      const depot = document.getElementById('filter-pay-depot').value;
+      const plate = document.getElementById('filter-pay-plate').value.toLowerCase().trim();
+      const driver = document.getElementById('filter-pay-driver').value.toLowerCase().trim();
+      const dealer = document.getElementById('filter-pay-dealer').value.toLowerCase().trim();
+
+      const filtered = allTrips.filter(t => {
+        // Durum filtresi (Tümü / Bekleyen / Ödenen)
+        if (currentPaymentStatusFilter === 'paid' && !t.is_paid) return false;
+        if (currentPaymentStatusFilter === 'unpaid' && t.is_paid) return false;
+
+        // Tarih Aralığı
+        if (startDate && t.trip_date < startDate) return false;
+        if (endDate && t.trip_date > endDate) return false;
+
+        // Depo
+        if (depot !== 'all' && t.warehouse_id !== Number(depot)) return false;
+
+        // Metin Aramaları
+        if (plate && !t.plate_number.toLowerCase().includes(plate)) return false;
+        if (driver && !t.driver_name.toLowerCase().includes(driver)) return false;
+        if (dealer && !t.dealer_name.toLowerCase().includes(dealer)) return false;
+
+        return true;
+      });
+
+      // Canlı Özet Sayaçları
+      document.getElementById('pay-filtered-count').innerText = filtered.length;
+      const totalAmount = filtered.reduce((sum, t) => sum + Number(t.paid_amount || t.amount || 0), 0);
+      document.getElementById('pay-filtered-amount').innerText = '₺ ' + totalAmount.toLocaleString('tr-TR');
+
       const tbody = document.getElementById('payments-table-body');
-      tbody.innerHTML = trips.map(t => `
+      tbody.innerHTML = filtered.length ? filtered.map(t => `
         <tr class="hover:bg-app-cardHover transition">
           <td class="py-3 px-4 font-mono text-slate-300">${t.trip_date}</td>
           <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${t.warehouse_id === 1 ? 'bg-sky-950 text-sky-400' : 'bg-indigo-950 text-indigo-400'}">${t.warehouse_id === 1 ? 'Biga' : 'İnegöl'}</span></td>
@@ -1021,16 +1213,15 @@
               : `<button onclick="openPaymentModal(${t.id}, '${t.plate_number} - ${t.driver_name}', ${t.amount})" class="text-xs font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-800 px-2 py-1 rounded hover:bg-emerald-900 transition">Ödeme Yap</button>`}
           </td>
         </tr>
-      `).join('');
+      `).join('') : '<tr><td colspan="8" class="p-6 text-center text-slate-500">Arama kriterlerine uygun ödeme kaydı bulunamadı.</td></tr>';
     }
 
-    function filterPaymentList(type) {
-      ['all', 'unpaid', 'paid'].forEach(t => document.getElementById('pay-btn-' + t).className = 'bg-app-sidebar text-slate-300 border border-app-cardBorder px-3 py-1.5 rounded-lg font-bold');
-      document.getElementById('pay-btn-' + type).className = 'bg-blue-600 text-white px-3 py-1.5 rounded-lg font-bold';
-
-      if (type === 'all') renderPaymentsTable(allTrips);
-      if (type === 'unpaid') renderPaymentsTable(allTrips.filter(t => !t.is_paid));
-      if (type === 'paid') renderPaymentsTable(allTrips.filter(t => t.is_paid));
+    function clearPaymentFilters() {
+      document.getElementById('filter-pay-depot').value = 'all';
+      document.getElementById('filter-pay-plate').value = '';
+      document.getElementById('filter-pay-driver').value = '';
+      document.getElementById('filter-pay-dealer').value = '';
+      filterPaymentsTable();
     }
 
     function openPaymentModal(tripId, title, amount) {
@@ -1080,7 +1271,7 @@
         alert('Ödeme başarıyla kaydedildi!');
         applyDateRangeFilter();
         renderDepotTables();
-        renderPaymentsTable(allTrips);
+        filterPaymentsTable();
       } catch (err) {
         alert('Ödeme hatası: ' + err.message);
       } finally {
@@ -1116,7 +1307,7 @@
       if (error) return alert('Güncelleme hatası: ' + error.message);
 
       closeModal('edit-modal');
-      alert('Sefer bilgileri ve plaka başarıyla güncellendi!');
+      alert('Sefer bilgileri ve plaka güncellendi!');
       fetchAndRenderAll();
     }
 
